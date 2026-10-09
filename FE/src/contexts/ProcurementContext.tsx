@@ -39,8 +39,7 @@ export function ProcurementProvider({ children }: {children: ReactNode;}) {
   const ref = useRef(state);
   ref.current = state;
 
-  useEffect(() => {
-    // Sync state with Django Backend SQLite API
+  const fetchState = () => {
     fetch('/api/v1/state/')
       .then((res) => (res.ok ? res.json() : null))
       .then((data: ProcurementState | null) => {
@@ -52,7 +51,23 @@ export function ProcurementProvider({ children }: {children: ReactNode;}) {
       .catch(() => {
         /* fallback to local state if offline */
       });
+  };
+
+  useEffect(() => {
+    // Initial fetch
+    fetchState();
+
+    // Poll every 5s for multi-user real-time sync across devices/browsers
+    const interval = setInterval(fetchState, 5000);
+    const onFocus = () => fetchState();
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+    };
   }, []);
+
 
   useEffect(() => {
     try {
