@@ -14,12 +14,30 @@ from .models import (
     PriceReference, AuditEntry
 )
 from .forms import LoginForm, UserProfileForm
+from .mongodb import save_state_to_mongo, load_state_from_mongo, save_state_to_cache, load_state_from_cache
+from .gemini_service import call_gemini_standardize
 
 # --- JSON REST API ENDPOINTS FOR FRONTEND (FE INTEGRATION) ---
 
 def spa_index_view(request):
     """Serves the integrated React Single Page Application (SPA) index.html"""
     return render(request, 'index.html')
+
+@csrf_exempt
+def api_ai_standardize_view(request):
+    """Call Google Gemini 2.5 Flash API for AI Standardization"""
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+            text = payload.get('text', '')
+            if text:
+                gemini_res = call_gemini_standardize(text)
+                if gemini_res:
+                    return JsonResponse({'ok': True, 'suggestion': gemini_res, 'source': 'gemini'})
+        except Exception as e:
+            print("Gemini API View Error:", e)
+    return JsonResponse({'ok': False, 'suggestion': None, 'source': 'fallback'})
+
 
 @csrf_exempt
 def api_sync_view(request):
@@ -62,6 +80,11 @@ def api_sync_view(request):
                     pr_id = req_data.get('id')
                     if pr_id:
                         pr = PurchaseRequest.objects.filter(id=pr_id).first()
+                        req_user_id = req_data.get('requesterId')
+                        req_user = User.objects.filter(id=req_user_id).first() if req_user_id else None
+                        if not req_user:
+                            req_user = User.objects.filter(role='employee').first()
+
                         if pr:
                             new_status = req_data.get('status')
                             # Security Guard: Enforce No Self-Approval at backend API layer (BUG-0001 / BUG-SEC-01)
@@ -86,13 +109,57 @@ def api_sync_view(request):
                                         'pr_id': pr_id
                                     }, status=403)
 
+                            if 'title' in req_data: pr.title = req_data['title']
+                            if 'justification' in req_data: pr.justification = req_data['justification']
                             if 'status' in req_data: pr.status = req_data['status']
                             if 'routedToFinance' in req_data: pr.routed_to_finance = req_data['routedToFinance']
                             if 'aiReview' in req_data: pr.ai_review = req_data['aiReview']
                             if 'lastReason' in req_data: pr.last_reason = req_data['lastReason']
                             if 'selectedQuotationId' in req_data: pr.selected_quotation_id = req_data['selectedQuotationId']
+                            if 'selectionNote' in req_data: pr.selection_note = req_data['selectionNote']
                             if 'poId' in req_data: pr.po_id = req_data['poId']
                             pr.save()
+                        else:
+                            # Create new PurchaseRequest if it doesn't exist
+                            req_by = req_data.get('requiredBy') if req_data.get('requiredBy') else None
+                            pr = PurchaseRequest.objects.create(
+                                id=pr_id,
+                                title=req_data.get('title', 'Purchase Request mới'),
+                                justification=req_data.get('justification', ''),
+                                department=req_data.get('department', req_user.department if req_user else 'Công nghệ thông tin'),
+                                cost_center=req_data.get('costCenter', 'CC-IT-01'),
+                                category=req_data.get('category', 'Thiết bị CNTT'),
+                                budget_code=req_data.get('budgetCode', 'BGT-IT-2026'),
+                                required_by=req_by,
+                                delivery_location=req_data.get('deliveryLocation', ''),
+                                requester=req_user,
+                                status=req_data.get('status', 'pending_manager'),
+                                routed_to_finance=req_data.get('routedToFinance', False),
+                                ai_review=req_data.get('aiReview', 'none'),
+                                last_reason=req_data.get('lastReason'),
+                                selected_quotation_id=req_data.get('selectedQuotationId'),
+                                selection_note=req_data.get('selectionNote'),
+                                po_id=req_data.get('poId')
+                            )
+
+                        # Sync line items if provided
+                        if 'items' in req_data and req_data['items']:
+                            for idx, it_data in enumerate(req_data['items'], 1):
+                                item_id = it_data.get('id', f"{pr.id}-i{idx}")
+                                PRLineItem.objects.update_or_create(
+                                    id=item_id,
+                                    defaults={
+                                        'pr': pr,
+                                        'name': it_data.get('name', ''),
+                                        'specs': it_data.get('specs', ''),
+                                        'quantity': it_data.get('quantity', 1),
+                                        'unit': it_data.get('unit', 'cái'),
+                                        'est_unit_price': Decimal(str(it_data.get('estUnitPrice', 0)))
+                                    }
+                                )
+
+            # Also update MongoDB & file cache with payload directly
+            save_state_to_cache(payload)
 
             # 3. Sync Quotations
             if 'quotations' in payload:
@@ -179,7 +246,13 @@ def api_sync_view(request):
     return api_state_view(request)
 
 def api_state_view(request):
-    """Returns 100% complete ProcurementState JSON matching FE React state"""
+    """Returns 100% complete ProcurementState JSON matching FE React state, synchronized with MongoDB/Cache"""
+    # Check if state exists in MongoDB or cache
+    cached_state = load_state_from_cache()
+    if cached_state:
+        return JsonResponse(cached_state)
+
+
     users_qs = User.objects.all()
     requests_qs = PurchaseRequest.objects.all().prefetch_related('items')
     quotations_qs = Quotation.objects.all()
@@ -267,4 +340,7 @@ def api_state_view(request):
             } for a in audit_qs
         ]
     }
+
+    # Save to MongoDB if connected
+    save_state_to_mongo(state)
     return JsonResponse(state)

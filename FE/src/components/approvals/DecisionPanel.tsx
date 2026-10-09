@@ -40,8 +40,10 @@ export function DecisionPanel({ pr, budget }: {pr: PurchaseRequest;budget?: Budg
   const DIALOGS: Record<Decision, DialogConfig> = {
     approve: {
       decision: 'approve',
-      title: isManager ? 'Approve Purchase Request' : 'Phê duyệt ngân sách',
-      confirmLabel: 'Approve',
+      title: isManager
+        ? (g.overThreshold ? 'Manager Approve & Chuyển Finance' : 'Approve Purchase Request')
+        : 'Phê duyệt ngân sách',
+      confirmLabel: isManager && g.overThreshold ? 'Approve & Send to Finance' : 'Approve',
       variant: 'success',
       required: isFinance && g.overBudget,
       reasonLabel: isFinance && g.overBudget ? 'Ghi chú phê duyệt vượt Budget' : 'Ghi chú',
@@ -79,6 +81,11 @@ export function DecisionPanel({ pr, budget }: {pr: PurchaseRequest;budget?: Budg
               {g.approveBlock}
             </Alert>
         }
+          {isManager && g.overThreshold && !g.approveBlock &&
+        <Alert tone="info" title="PR trên 50 triệu" className="mt-4">
+              Nhấn Approve sẽ phê duyệt cấp Manager và chuyển PR sang Finance phê duyệt ngân sách tiếp theo.
+            </Alert>
+        }
           {isFinance && g.overBudget &&
         <Alert tone="warning" title="PR vượt Budget khả dụng" className="mt-4">
               Nếu phê duyệt, bạn cần ghi chú căn cứ điều chỉnh ngân sách theo policy.
@@ -86,7 +93,7 @@ export function DecisionPanel({ pr, budget }: {pr: PurchaseRequest;budget?: Budg
         }
           <div className="mt-4 grid gap-2">
             <Button variant="success" icon={<CheckIcon className="h-4 w-4" aria-hidden />} disabled={Boolean(g.approveBlock)} onClick={() => setDialog(DIALOGS.approve)}>
-              Approve
+              {isManager && g.overThreshold ? 'Approve & Chuyển Finance' : 'Approve'}
             </Button>
             {isManager &&
           <Button variant="warning" icon={<SendIcon className="h-4 w-4" aria-hidden />} onClick={() => setDialog(DIALOGS.finance)}>

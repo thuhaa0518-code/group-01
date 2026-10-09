@@ -5,3 +5,5 @@ tzdata
 openpyxl
 reportlab
 pillow
+pymongo
+dnspython
