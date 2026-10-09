@@ -4,7 +4,12 @@ import urllib.request
 from django.conf import settings
 
 def call_gemini_standardize(text):
-    api_key = getattr(settings, 'GEMINI_API_KEY', os.getenv('GEMINI_API_KEY', ''))
+    api_key = (
+        getattr(settings, 'GEMINI_API_KEY', '') or
+        os.getenv('GEMINI_API_KEY', '') or
+        os.getenv('Gemini_API_Key', '') or
+        os.getenv('gemini_api_key', '')
+    )
     if not api_key:
         return None
     
