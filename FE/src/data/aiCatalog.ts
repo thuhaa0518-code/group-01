@@ -20,6 +20,11 @@ export const aiCatalog: AICatalogEntry[] = [
   missing: ['Kích thước và độ phân giải mong muốn', 'Cổng kết nối tương thích với máy hiện có']
 },
 {
+  keywords: ['bàn ghế', 'bàn gỗ', 'bàn làm việc'], shortName: 'bàn ghế văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ bàn ghế gỗ cao cấp', unit: 'bộ',
+  specs: 'Gỗ tự nhiên/công nghiệp cao cấp, bao gồm bàn làm việc và ghế đồng bộ, thiết kế hiện đại',
+  missing: ['Kích thước mặt bàn', 'Màu sắc / loại chất liệu gỗ']
+},
+{
   keywords: ['ghế'], shortName: 'ghế công thái học', category: 'Nội thất văn phòng', itemName: 'Ghế công thái học lưng lưới', unit: 'chiếc',
   specs: 'Tựa đầu, tay 4D, đệm ngồi trượt, chịu tải ≥ 120kg, bảo hành ≥ 36 tháng',
   missing: ['Màu sắc / chất liệu theo nhận diện văn phòng']

@@ -51,16 +51,22 @@ function analyze(text: string): AISuggestion | null {
   const matches = aiCatalog.filter((e) => e.keywords.some((k) => lower.includes(k)));
   if (!matches.length) return null;
 
+  const requiredBy = extractDate(text);
+  const deliveryLocation = extractLocation(text);
+  const estUnitPrice = extractPrice(text);
+
   const items = matches.map((m) => ({
     name: m.itemName,
     specs: m.specs,
     quantity: extractQuantity(lower, m.keywords) ?? 1,
-    unit: m.unit
+    unit: m.unit,
+    estUnitPrice: estUnitPrice ?? 0,
   }));
-  const missing = matches.flatMap((m) => m.missing);
-  if (!/(ngày|trước|deadline|\d{1,2}\/\d{1,2})/.test(lower)) missing.push('Ngày cần hàng — AI không tự điền ngày');
-  if (!/(tầng|văn phòng|địa chỉ|chi nhánh|tòa)/.test(lower)) missing.push('Địa điểm giao hàng');
-  missing.push('Đơn giá dự toán từng dòng — AI không tự điền giá');
+
+  const missing: string[] = [];
+  if (!requiredBy) missing.push('Ngày cần hàng');
+  if (!deliveryLocation) missing.push('Địa điểm giao hàng');
+  if (!estUnitPrice) missing.push('Đơn giá dự toán từng dòng');
 
   const primary = matches[0];
   const trimmed = text.trim();
@@ -69,9 +75,44 @@ function analyze(text: string): AISuggestion | null {
     category: primary.category,
     justification: trimmed.charAt(0).toUpperCase() + trimmed.slice(1),
     items,
+    requiredBy,
+    deliveryLocation,
     missing,
     matched: matches.map((m) => m.shortName)
   };
+}
+
+function extractDate(text: string): string | null {
+  const m = text.match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})/);
+  if (m) {
+    const day = m[1].padStart(2, '0');
+    const month = m[2].padStart(2, '0');
+    const year = m[3];
+    return `${year}-${month}-${day}`;
+  }
+  return null;
+}
+
+function extractLocation(text: string): string | null {
+  const m = text.match(/(giao tại|tại|giao ở|địa điểm:?)\s*([^.,;\n]+)/i);
+  if (m) {
+    let loc = m[2].trim();
+    loc = loc.replace(/\s*(trước|hạn|ngày|\d{1,2}[\/\.-]).*$/i, '').trim();
+    if (loc.length >= 3) return loc.charAt(0).toUpperCase() + loc.slice(1);
+  }
+  return null;
+}
+
+function extractPrice(text: string): number | undefined {
+  const m = text.match(/(\d+(?:[\.,]\d+)?)\s*(triệu|tr|trđ|đ|vnd)/i);
+  if (m) {
+    const val = parseFloat(m[1].replace(',', '.'));
+    const unit = m[2].toLowerCase();
+    if (unit.includes('triệu') || unit === 'tr' || unit === 'trđ') {
+      return val * 1_000_000;
+    }
+  }
+  return undefined;
 }
 
 function extractQuantity(lower: string, keywords: string[]): number | undefined {
