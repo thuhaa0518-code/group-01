@@ -17,23 +17,24 @@ function toInput(pr: PurchaseRequest): PRInput {
 
 export function useRequestForm(user: User, existing?: PurchaseRequest) {
   const { state } = useProcurement();
-  const deptBudgets = state.budgets.filter((b) => b.department === user.department);
+  const matchedBudgets = state.budgets.filter((b) => b.department === user.department);
+  const deptBudgets = matchedBudgets.length > 0 ? matchedBudgets : state.budgets;
 
   const [values, setValues] = useState<PRInput>(() =>
-  existing ?
-  toInput(existing) :
-  {
-    title: '',
-    justification: '',
-    department: user.department,
-    costCenter: deptBudgets[0]?.costCenter ?? '',
-    category: '',
-    budgetCode: deptBudgets[0]?.code ?? '',
-    requiredBy: '',
-    deliveryLocation: '',
-    items: [emptyItem()],
-    aiReview: 'none'
-  }
+    existing ?
+    toInput(existing) :
+    {
+      title: '',
+      justification: '',
+      department: user.department || 'Công nghệ thông tin',
+      costCenter: deptBudgets[0]?.costCenter ?? 'CC-IT-01',
+      category: '',
+      budgetCode: deptBudgets[0]?.code ?? 'BGT-IT-2026',
+      requiredBy: '',
+      deliveryLocation: '',
+      items: [emptyItem()],
+      aiReview: 'none'
+    }
   );
   const [showErrors, setShowErrors] = useState(false);
 
