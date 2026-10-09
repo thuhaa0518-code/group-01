@@ -1,0 +1,55 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, procurement, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying procurement.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+test_tc_us03_001_ai_standardizer_suggestions (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us03_001_ai_standardizer_suggestions)
+[TC-US03-001] | US-03 | REQ-FR-03 | AC-03-01 ... ok
+test_tc_us03_002_human_in_the_loop_governance (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us03_002_human_in_the_loop_governance)
+[TC-US03-002] | US-03 | REQ-FR-03, CON-03 | AC-03-01 ... ok
+test_tc_us03_003_ai_standardizer_edge_cases_and_error_handling (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us03_003_ai_standardizer_edge_cases_and_error_handling)
+[TC-US03-003] | US-03 | REQ-FR-03 | AC-03-01 ... ok
+test_tc_us04_001_manager_approval_success (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_001_manager_approval_success)
+[TC-US04-001] | US-04 | REQ-FR-05, REQ-FR-06 | AC-04-01 ... ok
+test_tc_us04_002_manager_reject_with_mandatory_reason (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_002_manager_reject_with_mandatory_reason)
+[TC-US04-002] | US-04 | REQ-FR-06 | AC-04-02 ... ok
+test_tc_us04_003_manager_forward_to_finance (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_003_manager_forward_to_finance)
+[TC-US04-003] | US-04 | REQ-FR-06, REQ-BR-04 | AC-04-02 ... ok
+test_tc_us04_004_manager_request_revision (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_004_manager_request_revision)
+[TC-US04-004] | US-04 | REQ-FR-06 | AC-04-02 ... ok
+test_tc_us05_001_budget_commitment_and_remaining_calculation (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us05_001_budget_commitment_and_remaining_calculation)
+[TC-US05-001] | US-05 | REQ-FR-08 | AC-05-01 ... ok
+test_tc_us05_002_budget_threshold_50m_boundary_test (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us05_002_budget_threshold_50m_boundary_test)
+[TC-US05-002] | US-05 | REQ-FR-08, REQ-BR-04 | AC-05-01 ... ok
+test_tc_us05_003_exceeded_budget_detection_and_alert (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us05_003_exceeded_budget_detection_and_alert)
+[TC-US05-003] | US-05 | REQ-FR-09, REQ-BR-05 | AC-05-02 ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.035s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...

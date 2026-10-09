@@ -1,0 +1,91 @@
+======================================================================
+TEST EXECUTION MASTER LOG — QA-07 (RUN-20261009-220000)
+Run ID: RUN-20261009-220000
+Timestamp: 2026-10-09T22:00:00+07:00
+Host: Windows 11 Enterprise (amd64) | Python 3.13.0 | Django 5.1.1 | Node v24.11.1
+======================================================================
+
+----------------------------------------------------------------------
+[PHASE 1] DISCOVERY & RUNNER CHECK
+Command: python manage.py check
+Exit Code: 0
+Output:
+System check identified no issues (0 silenced).
+
+Command: python manage.py makemigrations --check --dry-run
+Exit Code: 0
+Output:
+No changes detected
+
+----------------------------------------------------------------------
+[PHASE 2] UNIT TESTS
+Command: python manage.py test procurement.tests -v 2
+Exit Code: 0
+Output:
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 7 test(s).
+Running migrations: OK
+System check identified no issues (0 silenced).
+test_ai_standardizer_service (procurement.tests.ProcurementUnitModelTests.test_ai_standardizer_service) ... ok
+test_audit_entry_logging (procurement.tests.ProcurementUnitModelTests.test_audit_entry_logging) ... ok
+test_budget_remaining_calculation (procurement.tests.ProcurementUnitModelTests.test_budget_remaining_calculation) ... ok
+test_pr_creation_and_estimated_amount (procurement.tests.ProcurementUnitModelTests.test_pr_creation_and_estimated_amount) ... ok
+test_purchase_order_and_receiving (procurement.tests.ProcurementUnitModelTests.test_purchase_order_and_receiving) ... ok
+test_quotation_calculations (procurement.tests.ProcurementUnitModelTests.test_quotation_calculations) ... ok
+test_user_roles_and_properties (procurement.tests.ProcurementUnitModelTests.test_user_roles_and_properties) ... ok
+
+Ran 7 tests in 0.019s
+OK
+Destroying test database for alias 'default'...
+
+----------------------------------------------------------------------
+[PHASE 3] INTEGRATION & API TESTS (FULL AUTOMATED SUITE)
+Command: python manage.py test -v 2
+Exit Code: 0
+Output:
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 53 test(s).
+Running migrations: OK
+System check identified no issues (0 silenced).
+Ran 53 tests in 0.224s
+OK
+Destroying test database for alias 'default'...
+
+----------------------------------------------------------------------
+[PHASE 4] FRONTEND UNIT TESTS
+Status: BLOCKED
+Reason: Framework kiểm thử Frontend (Vitest / Jest) chưa được cài đặt trong FE/package.json.
+
+----------------------------------------------------------------------
+[PHASE 5] END-TO-END TESTS
+Status: NOT CONFIGURED / NOT RUN
+Reason: Chưa có cấu hình framework E2E (Playwright / Cypress) trong dự án.
+
+----------------------------------------------------------------------
+[PHASE 6] CODE QUALITY, LINTING, TYPECHECK & BUILD
+
+[Sub-Phase 6.1] ESLint Check
+Command: npm.cmd --prefix FE run lint
+Exit Code: 1
+Output:
+✖ 17 problems (2 errors, 15 warnings)
+
+[Sub-Phase 6.2] TypeScript Type Check
+Command: npx.cmd --prefix FE tsc --project FE/tsconfig.json --noEmit
+Exit Code: 1
+Output:
+69 errors (63 TS6133 unused vars/React, 5 TS2749 value used as type 'BoxIcon', 1 TS6192 unused imports).
+
+[Sub-Phase 6.3] Production Build
+Command: npm.cmd --prefix FE run build
+Exit Code: 0
+Output:
+✓ 2380 modules transformed.
+dist/index.html                   0.48 kB │ gzip:   0.31 kB
+dist/assets/index-DOkmxdel.css   29.40 kB │ gzip:   6.21 kB
+dist/assets/index-B64izx3U.js   584.42 kB │ gzip: 174.05 kB
+✓ built in 31.57s
+
+======================================================================
+END OF TEST EXECUTION MASTER LOG
+======================================================================

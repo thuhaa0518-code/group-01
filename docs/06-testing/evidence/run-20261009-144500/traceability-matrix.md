@@ -1,0 +1,22 @@
+# Requirement Traceability Matrix (RTM)
+
+- **Run ID:** `run-20261009-144500`
+- **Audit Date:** 2026-10-09
+
+| Requirement ID | Description / Acceptance Criteria | Documented Test Case | Real Execution Command | Actual Result | Execution Status | Defect / Evidence Link |
+|:---|:---|:---|:---|:---|:---:|:---|
+| **REQ-FR-01** | Employee tạo và quản lý Purchase Request (PR Draft) | `TC-WF-001` | `node --test tests/workflow.test.js` | Module `src/server` không tồn tại, crash khi import | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-FR-02** | Kiểm tra thông tin PR trước khi Submit | `TC-WF-002` | `node --test tests/workflow.test.js` | Suite bị crash ở file level | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-FR-03** | AI hỗ trợ chuẩn hóa PR & gợi ý danh mục | `TC-AI-001` | `node --test tests/workflow.test.js` | Suite bị crash ở file level | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-FR-05, REQ-FR-06** | Manager xem & phê duyệt PR (Workflow Transition) | `TC-WF-003` | `node --test tests/workflow.test.js` | Suite bị crash ở file level | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-FR-08, REQ-FR-09** | Cảnh báo vượt Budget & cờ kiểm tra Finance | `TC-WF-002` | `procurement/tests.py` | `ImportError: Department` từ `models.py` | **ERROR** | [DEFECT-02](defect-log.md#defect-02-django-unit-test-suite-fails-on-import-with-obsolete-model-names) / [Log](execution-log.txt) |
+| **REQ-FR-13, REQ-FR-15** | AI so sánh Báo giá & Cảnh báo bất thường giá (≥20%) | `TC-AI-002` | `node --test tests/workflow.test.js` | Suite bị crash ở file level | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-FR-16** | Tạo Purchase Order sau khi duyệt báo giá | `TC-WF-004` | `node --test tests/workflow.test.js` | Suite bị crash ở file level | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-FR-17** | Ghi nhận biên bản Receiving đối với hàng hóa | `TC-WF-005` | `procurement/tests.py` | `ImportError: Department` từ `models.py` | **ERROR** | [DEFECT-02](defect-log.md#defect-02-django-unit-test-suite-fails-on-import-with-obsolete-model-names) / [Log](execution-log.txt) |
+| **REQ-FR-18** | Đóng Purchase Request (Close PR) | `TC-WF-006` | `node --test tests/workflow.test.js` | Suite bị crash ở file level | **ERROR** | [DEFECT-01](defect-log.md#defect-01-nodejs-automated-workflow-test-missing-implementation-modules) / [Log](execution-log.txt) |
+| **REQ-NFR-02** | Phân quyền 5 vai trò & Quy tắc No Self-Approval Guard | `TC-SEC-001`, `TC-SEC-002` | `tests/permissions.test.ts` | Vitest chưa được cài đặt; thiếu module client | **BLOCKED** | [DEFECT-03](defect-log.md#defect-03-vitest-missing-for-security--permission-tests) / [Log](execution-log.txt) |
+| **Code Quality** | Tuân thủ TypeScript & ESLint trong Frontend | ESLint Suite | `npm.cmd --prefix FE run lint` | 2 errors, 15 warnings (`no-cond-assign`, `@typescript-eslint/no-empty-function`) | **FAIL** | [DEFECT-04](defect-log.md#defect-04-eslint-and-conditional-assignment-errors-in-frontend) / [Log](execution-log.txt) |
+| **Architecture Build** | Bản build sản phẩm Frontend sẵn sàng phục vụ | Build Suite | `npm.cmd --prefix FE run build` | Tạo thành công bundle tại `FE/dist` | **PASS** | [Summary](execution-summary.md) / [Log](execution-log.txt) |
+| **System Health** | Kiểm tra toàn vẹn ứng dụng Backend Django | System Check | `python manage.py check` | 0 issues identified | **PASS** | [Summary](execution-summary.md) / [Log](execution-log.txt) |
+| **Database Sync** | Kiểm tra tính nhất quán giữa Model và Migration | Migration Check | `python manage.py makemigrations --check --dry-run` | No changes detected | **PASS** | [Summary](execution-summary.md) / [Log](execution-log.txt) |
+| **Security Audit** | Rà soát lỗ hổng bảo mật dependency trong node_modules | Security Audit | `npm.cmd --prefix FE audit` | 47 lỗ hổng (1 Critical, 33 High, 13 Moderate) | **FAIL** | [DEFECT-05](defect-log.md#defect-05-47-dependency-vulnerabilities-in-frontend-npm-tree) / [Log](execution-log.txt) |

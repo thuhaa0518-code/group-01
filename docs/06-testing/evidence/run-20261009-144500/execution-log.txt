@@ -1,0 +1,234 @@
+================================================================================
+COMMAND EXECUTION LOG - RUN ID: run-20261009-144500
+Timestamp: 2026-10-09T14:45:00+07:00
+Host: Windows PowerShell
+Repository: D:\LTUD\group-01 - LTUDDN
+Commit: 224a7e8ebdbd9be1b74ed09c0e4aad8b62818279
+================================================================================
+
+[COMMAND 1]: python manage.py check
+Exit Code: 0
+Duration: ~16s
+--- OUTPUT START ---
+System check identified no issues (0 silenced).
+--- OUTPUT END ---
+
+[COMMAND 2]: python manage.py makemigrations --check --dry-run
+Exit Code: 0
+Duration: ~4s
+--- OUTPUT START ---
+No changes detected
+--- OUTPUT END ---
+
+[COMMAND 3]: python manage.py test
+Exit Code: 1
+Duration: ~17s
+--- OUTPUT START ---
+Found 1 test(s).
+System check identified no issues (0 silenced).
+E
+======================================================================
+ERROR: procurement.tests (unittest.loader._FailedTest.procurement.tests)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: procurement.tests
+Traceback (most recent call last):
+  File "C:\Users\TechCare\AppData\Local\Programs\Python\Python313\Lib\unittest\loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\TechCare\AppData\Local\Programs\Python\Python313\Lib\unittest\loader.py", line 339, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\LTUD\group-01 - LTUDDN\procurement\tests.py", line 3, in <module>
+    from procurement.models import Department, User, Budget, PurchaseRequest, PRItem, Supplier, Quotation, PurchaseOrder, Receiving
+ImportError: cannot import name 'Department' from 'procurement.models' (D:\LTUD\group-01 - LTUDDN\procurement\models.py)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (errors=1)
+--- OUTPUT END ---
+
+[COMMAND 4]: node --test tests/workflow.test.js
+Exit Code: 1
+Duration: ~118ms
+--- OUTPUT START ---
+node:internal/modules/esm/resolve:274
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'D:\LTUD\group-01 - LTUDDN\src\server\services\db.service.js' imported from D:\LTUD\group-01 - LTUDDN\tests\workflow.test.js
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:757:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:734:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:317:38)
+    at #link (node:internal/modules/esm/module_job:208:49) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///D:/LTUD/group-01%20-%20LTUDDN/src/server/services/db.service.js'
+}
+
+Node.js v24.10.0
+✖ tests\workflow.test.js (100.7615ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.5332
+
+✖ failing tests:
+
+test at tests\workflow.test.js:1:1
+✖ tests\workflow.test.js (100.7615ms)
+  'test failed'
+--- OUTPUT END ---
+
+[COMMAND 5]: npm.cmd --prefix FE run lint
+Exit Code: 1
+Duration: ~15s
+--- OUTPUT START ---
+> magic-patterns-vite-template@0.0.1 lint
+> eslint . --ext .js,.jsx,.ts,.tsx
+
+D:\LTUD\group-01 - LTUDDN\FE\src\App.tsx
+  22:10  warning  'AdminCatalogPage' is defined but never used  @typescript-eslint/no-unused-vars
+  25:10  warning  'AssumptionsPage' is defined but never used   @typescript-eslint/no-unused-vars
+
+D:\LTUD\group-01 - LTUDDN\FE\src\components\suppliers\SupplierDialog.tsx
+  25:21  warning  '_id' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\LTUD\group-01 - LTUDDN\FE\src\components\ui\Button.tsx
+  31:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\LTUD\group-01 - LTUDDN\FE\src\contexts\AuthContext.tsx
+  120:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  126:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\LTUD\group-01 - LTUDDN\FE\src\contexts\ProcurementContext.tsx
+  76:22  error    Unexpected empty arrow function                                                                                                 @typescript-eslint/no-empty-function
+  90:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\LTUD\group-01 - LTUDDN\FE\src\data\navigation.ts
+  4:3  warning  'FileTextIcon' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\LTUD\group-01 - LTUDDN\FE\src\pages\Login.tsx
+   4:31  warning  'LockIcon' is defined but never used            @typescript-eslint/no-unused-vars
+  12:10  warning  'ROLE_LABEL' is defined but never used          @typescript-eslint/no-unused-vars
+  12:22  warning  'ROLE_SUMMARY' is defined but never used        @typescript-eslint/no-unused-vars
+  22:18  warning  'reset' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  52:9   warning  'fill' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  58:9   warning  'demoUsers' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\LTUD\group-01 - LTUDDN\FE\src\pages\Orders.tsx
+  30:31  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+D:\LTUD\group-01 - LTUDDN\FE\src\utils\aiStandardizer.ts
+  72:10  error  Expected a conditional expression and instead saw an assignment  no-cond-assign
+
+✖ 17 problems (2 errors, 15 warnings)
+--- OUTPUT END ---
+
+[COMMAND 6]: npx.cmd --prefix FE tsc -p FE/tsconfig.json --noEmit
+Exit Code: 1
+Duration: ~30s
+--- OUTPUT START ---
+FE/src/App.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/App.tsx(22,1): error TS6133: 'AdminCatalogPage' is declared but its value is never read.
+FE/src/App.tsx(25,1): error TS6133: 'AssumptionsPage' is declared but its value is never read.
+FE/src/components/approvals/DecisionPanel.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/budget/BudgetPanel.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/layout/AppShell.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/layout/Logo.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/layout/RequireAuth.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/layout/Sidebar.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/orders/ReceivingForm.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/orders/ReconciliationPanel.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/requests/AIStandardizerPanel.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/requests/LineItemsEditor.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/requests/RequestSummary.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/requests/RequestTable.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/requests/TraceabilityChain.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/requests/TraceabilityChain.tsx(3,84): error TS6133: 'BoxIcon' is declared but its value is never read.
+FE/src/components/requests/TraceabilityChain.tsx(11,14): error TS2749: 'BoxIcon' refers to a value, but is being used as a type here. Did you mean 'typeof BoxIcon'?
+FE/src/components/sourcing/AddQuotationPanel.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/sourcing/ComparisonMatrix.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/sourcing/CreatePOPanel.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/sourcing/RecommendationPanel.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/sourcing/SourceFileDialog.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/suppliers/SupplierDialog.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/Alert.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/AssistantCard.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/Button.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/EmptyState.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/EmptyState.tsx(2,1): error TS6133: 'BoxIcon' is declared but its value is never read.
+FE/src/components/ui/EmptyState.tsx(4,9): error TS2749: 'BoxIcon' refers to a value, but is being used as a type here. Did you mean 'typeof BoxIcon'?
+FE/src/components/ui/FormField.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/Modal.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/PageHeader.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/ReasonDialog.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/StatusBadge.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/ui/StatusBadge.tsx(2,156): error TS6133: 'BoxIcon' is declared but its value is never read.
+FE/src/components/ui/StatusBadge.tsx(6,34): error TS2749: 'BoxIcon' refers to a value, but is being used as a type here. Did you mean 'typeof BoxIcon'?
+FE/src/components/ui/StatusBadge.tsx(19,34): error TS2749: 'BoxIcon' refers to a value, but is being used as a type here. Did you mean 'typeof BoxIcon'?
+FE/src/components/ui/Tag.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/workflow/AuditTimeline.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/workflow/WorkflowMini.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/components/workflow/WorkflowStepper.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/contexts/AuthContext.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/contexts/ProcurementContext.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/data/navigation.ts(4,3): error TS6133: 'FileTextIcon' is declared but its value is never read.
+FE/src/index.tsx(2,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/admin/Catalog.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/admin/Users.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Approvals.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Assumptions.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/AuditTrail.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/BudgetReview.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Dashboard.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Login.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Login.tsx(4,31): error TS6133: 'LockIcon' is declared but its value is never read.
+FE/src/pages/Login.tsx(12,1): error TS6192: All imports in import declaration are unused.
+FE/src/pages/Login.tsx(22,18): error TS6133: 'reset' is declared but its value is never read.
+FE/src/pages/Login.tsx(52,9): error TS6133: 'fill' is declared but its value is never read.
+FE/src/pages/Login.tsx(58,9): error TS6133: 'demoUsers' is declared but its value is never read.
+FE/src/pages/NotFound.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/OrderDetail.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Orders.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/RequestDetail.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/RequestForm.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Requests.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Sourcing.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/SourcingDetail.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Suppliers.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+FE/src/pages/Unauthorized.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+--- OUTPUT END ---
+
+[COMMAND 7]: npm.cmd --prefix FE run build
+Exit Code: 0
+Duration: ~44s
+--- OUTPUT START ---
+> magic-patterns-vite-template@0.0.1 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 2380 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.48 kB │ gzip:   0.31 kB
+dist/assets/index-DOkmxdel.css   29.40 kB │ gzip:   6.21 kB
+dist/assets/index-B64izx3U.js   584.42 kB │ gzip: 174.05 kB
+✓ built in 44.41s
+--- OUTPUT END ---
+
+[COMMAND 8]: npm.cmd --prefix FE audit
+Exit Code: 1
+Duration: ~55s
+--- OUTPUT START ---
+47 vulnerabilities (13 moderate, 33 high, 1 critical)
+Critical: tar (file smuggling / DoS)
+High: minimatch, smol-toml, js-yaml, path-to-regexp
+Moderate: esbuild, postcss-selector-parser, react-router
+--- OUTPUT END ---

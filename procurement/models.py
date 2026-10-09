@@ -1,5 +1,7 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -223,3 +225,7 @@ class AuditEntry(models.Model):
 
     def __str__(self):
         return f"[{self.at.strftime('%Y-%m-%d %H:%M')}] {self.actor_name} ({self.role}) - {self.action} on {self.entity} {self.entity_id}"
+
+# Alias for backwards compatibility
+AuditLog = AuditEntry
+

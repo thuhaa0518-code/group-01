@@ -1,5 +1,12 @@
+/**
+ * [OBSOLETE / MIGRATED]
+ * This Node.js integration test suite has been officially migrated to Django test runner:
+ * Target suite: procurement/tests_workflow.py (Decision 1A - AI-QA-03)
+ * Reason: Backend architecture is implemented in Django Python, not Node.js in src/server.
+ */
 import test from 'node:test';
 import assert from 'node:assert';
+
 import { db } from '../src/server/services/db.service.js';
 import { submitPR, approvePR, rejectPR, createPO, receiveGoods, closePR, WORKFLOW_STATES } from '../src/server/services/workflow.service.js';
 import { normalizePRWithAI, compareQuotationsWithAI } from '../src/server/services/ai.service.js';

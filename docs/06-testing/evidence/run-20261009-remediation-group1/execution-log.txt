@@ -1,0 +1,75 @@
+================================================================================
+REMEDIATION GROUP 1 EXECUTION LOG - RUN ID: run-20261009-remediation-group1
+Timestamp: 2026-10-09T15:23:00+07:00
+Host: Windows PowerShell
+Repository: D:\LTUD\group-01 - LTUDDN
+Command: python manage.py test procurement -v 2
+================================================================================
+
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 16 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, procurement, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying procurement.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+test_ai_standardizer_service (procurement.tests.ProcurementUnitModelTests.test_ai_standardizer_service)
+Kiểm tra AI Standardizer chuẩn hóa danh mục và gợi ý thông số ... ok
+test_audit_entry_logging (procurement.tests.ProcurementUnitModelTests.test_audit_entry_logging)
+Kiểm tra ghi nhận AuditEntry đầy đủ trường thông tin ... ok
+test_budget_remaining_calculation (procurement.tests.ProcurementUnitModelTests.test_budget_remaining_calculation)
+Kiểm tra tính toán ngân sách còn lại: remaining = allocated - committed ... ok
+test_pr_creation_and_estimated_amount (procurement.tests.ProcurementUnitModelTests.test_pr_creation_and_estimated_amount)
+Kiểm tra tạo PR, thêm PRLineItem và tính tổng tiền dự toán ... ok
+test_purchase_order_and_receiving (procurement.tests.ProcurementUnitModelTests.test_purchase_order_and_receiving)
+Kiểm tra tạo PO và ghi nhận biên bản nhận hàng Receiving ... ok
+test_quotation_calculations (procurement.tests.ProcurementUnitModelTests.test_quotation_calculations)
+Kiểm tra tính toán tiền báo giá: subtotal, VAT và total_amount ... ok
+test_user_roles_and_properties (procurement.tests.ProcurementUnitModelTests.test_user_roles_and_properties)
+Kiểm tra thuộc tính người dùng và 5 vai trò RBAC ... ok
+test_step_01_create_draft_pr_and_ai_standardizer (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_01_create_draft_pr_and_ai_standardizer)
+Bước 1: Tạo PR bản nháp và chạy AI Standardizer chuẩn hóa thông tin (REQ-FR-01, REQ-FR-03) ... ok
+test_step_02_submit_pr_and_budget_commitment (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_02_submit_pr_and_budget_commitment)
+Bước 2: Submit PR và chuyển trạng thái sang pending_manager, giữ chỗ ngân sách (REQ-FR-02, REQ-BR-01) ... ok
+test_step_03_strict_no_self_approval_guard (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_03_strict_no_self_approval_guard)
+Bước 3: Kiểm tra quy tắc bảo mật nghiêm ngặt No Self-Approval (REQ-NFR-02) ... ok
+test_step_04_manager_approval_success (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_04_manager_approval_success)
+Bước 4: Manager hợp lệ phê duyệt PR thành công chuyển sang approved (REQ-FR-05, REQ-FR-06) ... ok
+test_step_05_quotation_collection_and_price_anomaly_alert (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_05_quotation_collection_and_price_anomaly_alert)
+Bước 5: Thu thập báo giá và kích hoạt cảnh báo giá bất thường khi chênh lệch >= 20% (REQ-FR-15) ... ok
+test_step_06_create_po_from_selected_quotation (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_06_create_po_from_selected_quotation)
+Bước 6: Tạo đơn mua hàng PO từ báo giá được chọn (REQ-FR-16) ... ok
+test_step_07_goods_receiving_full (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_07_goods_receiving_full)
+Bước 7: Ghi nhận biên bản nhận hàng Receiving đầy đủ (REQ-FR-17) ... ok
+test_step_08_close_pr_lifecycle (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_08_close_pr_lifecycle)
+Bước 8: Đóng vòng đời Purchase Request (Close PR) (REQ-FR-18) ... ok
+test_step_09_api_state_and_sync_endpoints (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_09_api_state_and_sync_endpoints)
+Bước 9: Kiểm tra hợp đồng API REST /api/v1/state/ và /api/v1/sync/ ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.090s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
