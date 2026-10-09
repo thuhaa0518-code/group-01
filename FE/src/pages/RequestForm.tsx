@@ -42,7 +42,7 @@ function RequestFormBody({ existing }: {existing?: PurchaseRequest;}) {
   const e = f.visibleErrors;
 
   const save = () => {
-    if (f.values.title.trim().length < 3) {
+    if ((f.values.title || '').trim().length < 3) {
       toast.error('Nhập tiêu đề trước khi lưu nháp.');
       return;
     }
