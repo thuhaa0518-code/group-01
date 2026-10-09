@@ -20,7 +20,12 @@ export const aiCatalog: AICatalogEntry[] = [
   missing: ['Kích thước và độ phân giải mong muốn', 'Cổng kết nối tương thích với máy hiện có']
 },
 {
-  keywords: ['ghế'], shortName: 'ghế công thái học', category: 'Nội thất văn phòng', itemName: 'Ghế công thái học lưng lưới', unit: 'chiếc',
+  keywords: ['bàn ghế', 'bàn gỗ', 'bàn làm việc'], shortName: 'bàn ghế văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ bàn ghế gỗ cao cấp', unit: 'bộ',
+  specs: 'Gỗ tự nhiên/công nghiệp cao cấp, bao gồm bàn làm việc và ghế đồng bộ, thiết kế hiện đại',
+  missing: ['Kích thước mặt bàn', 'Màu sắc / loại chất liệu gỗ']
+},
+{
+  keywords: ['ghế công thái học', 'ghế xoay', 'ghế lưới', 'ghế làm việc', 'ghế cá nhân'], shortName: 'ghế công thái học', category: 'Nội thất văn phòng', itemName: 'Ghế công thái học lưng lưới', unit: 'chiếc',
   specs: 'Tựa đầu, tay 4D, đệm ngồi trượt, chịu tải ≥ 120kg, bảo hành ≥ 36 tháng',
   missing: ['Màu sắc / chất liệu theo nhận diện văn phòng']
 },
@@ -53,4 +58,14 @@ export const aiCatalog: AICatalogEntry[] = [
   keywords: ['brochure', 'tờ rơi', 'in ấn', 'standee'], shortName: 'ấn phẩm in', category: 'In ấn & Marketing', itemName: 'Brochure A4 gấp 3', unit: 'tờ',
   specs: 'Giấy C150, in 4 màu 2 mặt, cán mờ',
   missing: ['File thiết kế đã duyệt', 'Số lượng theo từng loại ấn phẩm']
+},
+{
+  keywords: ['bút', 'bút bi', 'bút mực', 'bút ký', 'viết'], shortName: 'bút viết văn phòng', category: 'Văn phòng phẩm', itemName: 'Bút bi / Bút ký văn phòng cao cấp', unit: 'cây',
+  specs: 'Mực bi / mực gel 0.5mm, ngòi trơn nét đều, thiết kế văn phòng',
+  missing: ['Loại ngòi và màu mực (xanh / đen / đỏ)']
+},
+{
+  keywords: ['giấy', 'giấy in', 'văn phòng phẩm', 'sổ'], shortName: 'văn phòng phẩm', category: 'Văn phòng phẩm', itemName: 'Giấy in A4 / Văn phòng phẩm tiêu chuẩn', unit: 'ram',
+  specs: 'Định lượng 70–80gsm, độ trắng ≥ 90%, in 2 mặt không kẹt giấy',
+  missing: ['Định lượng và thương hiệu mong muốn']
 }];

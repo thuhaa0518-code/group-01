@@ -11,6 +11,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/state/', views.api_state_view, name='api_state'),
     path('api/v1/sync/', views.api_sync_view, name='api_sync'),
+    path('api/v1/ai/standardize/', views.api_ai_standardize_view, name='api_ai_standardize'),
+
 
     # Serve static assets compiled from FE Vite build
     re_path(r'^assets/(?P<path>.*)$', serve, {

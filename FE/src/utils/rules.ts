@@ -28,23 +28,34 @@ export function prTotal(pr: {items: LineItem[];}): number {
 
 export function validatePR(input: PRInput): Record<string, string> {
   const e: Record<string, string> = {};
-  if (input.title.trim().length < 5) e.title = 'Nhập tiêu đề tối thiểu 5 ký tự.';
-  if (!input.category) e.category = 'Chọn Category.';
-  if (!input.department) e.department = 'Thiếu Department.';
-  if (!input.costCenter) e.costCenter = 'Chọn Cost centre.';
-  if (!input.budgetCode) e.budgetCode = 'Chọn Budget code.';
-  if (!input.requiredBy) e.requiredBy = 'Chọn ngày cần hàng.';else
-  {
+  const title = (input?.title || '').trim();
+  const category = input?.category || '';
+  const department = input?.department || '';
+  const costCenter = input?.costCenter || '';
+  const budgetCode = input?.budgetCode || '';
+  const requiredBy = input?.requiredBy || '';
+  const deliveryLocation = (input?.deliveryLocation || '').trim();
+  const justification = (input?.justification || '').trim();
+  const items = input?.items || [];
+
+  if (title.length < 5) e.title = 'Nhập tiêu đề tối thiểu 5 ký tự.';
+  if (!category) e.category = 'Chọn Category.';
+  if (!department) e.department = 'Thiếu Department.';
+  if (!costCenter) e.costCenter = 'Chọn Cost centre.';
+  if (!budgetCode) e.budgetCode = 'Chọn Budget code.';
+  if (!requiredBy) e.requiredBy = 'Chọn ngày cần hàng.'; else {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    if (new Date(input.requiredBy) <= today) e.requiredBy = 'Ngày cần hàng phải sau hôm nay.';
+    if (new Date(requiredBy) <= today) e.requiredBy = 'Ngày cần hàng phải sau hôm nay.';
   }
-  if (!input.deliveryLocation.trim()) e.deliveryLocation = 'Nhập địa điểm giao hàng.';
-  if (input.justification.trim().length < 20) e.justification = 'Mô tả mục đích mua sắm tối thiểu 20 ký tự.';
-  if (input.items.length === 0) e.items = 'Thêm ít nhất 1 sản phẩm/dịch vụ.';
-  input.items.forEach((i) => {
-    if (!i.name.trim()) e[`item.${i.id}.name`] = 'Nhập tên sản phẩm/dịch vụ.';
-    if (!i.specs.trim()) e[`item.${i.id}.specs`] = 'Nhập thông số kỹ thuật.';
+  if (!deliveryLocation) e.deliveryLocation = 'Nhập địa điểm giao hàng.';
+  if (justification.length < 20) e.justification = 'Mô tả mục đích mua sắm tối thiểu 20 ký tự.';
+  if (items.length === 0) e.items = 'Thêm ít nhất 1 sản phẩm/dịch vụ.';
+  items.forEach((i) => {
+    const name = (i?.name || '').trim();
+    const specs = (i?.specs || '').trim();
+    if (!name) e[`item.${i.id}.name`] = 'Nhập tên sản phẩm/dịch vụ.';
+    if (!specs) e[`item.${i.id}.specs`] = 'Nhập thông số kỹ thuật.';
     if (!(i.quantity > 0)) e[`item.${i.id}.quantity`] = 'Số lượng > 0.';
     if (!(i.estUnitPrice > 0)) e[`item.${i.id}.estUnitPrice`] = 'Nhập đơn giá dự toán.';
   });
@@ -90,8 +101,6 @@ export function managerGuard(user: User, pr: PurchaseRequest, budget?: Budget): 
   blockReason ?? (
   overBudget ?
   'PR vượt Budget khả dụng. Chọn Reject, yêu cầu chỉnh sửa hoặc chuyển Finance kiểm tra ngân sách.' :
-  overThreshold ?
-  `PR trên ${formatCompactVND(FINANCE_THRESHOLD)} cần cả Manager và Finance phê duyệt — hãy chuyển Finance.` :
   undefined);
   return { check, selfApproval, outOfScope, overThreshold, overBudget, blockReason, approveBlock };
 }

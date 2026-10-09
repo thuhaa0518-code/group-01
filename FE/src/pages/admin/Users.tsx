@@ -61,14 +61,12 @@ export function AdminUsersPage() {
       setFormError('Vui lòng nhập email.');
       return;
     }
-    if (formReason.trim().length < 5) {
-      setFormError('Vui lòng nhập lý do điều chỉnh tài khoản (tối thiểu 5 ký tự).');
-      return;
-    }
+
+    const reason = formReason.trim() || 'Cập nhật thông tin tài khoản bởi Admin';
 
     const patch: Partial<User> = {
       name: formName.trim(),
-      username: formUsername.trim(),
+      username: formUsername.trim() || editingUser.username || editingUser.id,
       email: formEmail.trim(),
       department: formDept.trim(),
       title: formTitle.trim(),
@@ -81,7 +79,7 @@ export function AdminUsersPage() {
       patch.password = formPassword.trim();
     }
 
-    const res = act(updateUser, editingUser.id, patch, formReason.trim());
+    const res = act(updateUser, editingUser.id, patch, reason);
     if (res.ok) {
       toast.success(`Đã cập nhật thông tin tài khoản ${formName}`);
       setEditingUser(null);
@@ -89,6 +87,7 @@ export function AdminUsersPage() {
       setFormError(res.error || 'Cập nhật thất bại.');
     }
   };
+
 
   return (
     <div>

@@ -14,6 +14,7 @@ import { Alert } from '../components/ui/Alert';
 import { AIStandardizerPanel } from '../components/requests/AIStandardizerPanel';
 import { LineItemsEditor } from '../components/requests/LineItemsEditor';
 import { RequestSummary } from '../components/requests/RequestSummary';
+import { can } from '../utils/permissions';
 import { UnauthorizedPage } from './Unauthorized';
 import { NotFoundPage } from './NotFound';
 
@@ -23,12 +24,14 @@ export function RequestFormPage() {
   const { state } = useProcurement();
   const existing = id ? state.requests.find((r) => r.id === id) : undefined;
 
+  if (!can(user, 'pr.create')) return <UnauthorizedPage />;
   if (id && !existing) return <NotFoundPage message="Không tìm thấy Purchase Request." />;
   if (existing && existing.requesterId !== user.id) return <UnauthorizedPage />;
   if (existing && existing.status !== 'draft' && existing.status !== 'revision')
-  return <NotFoundPage message="PR đã Submit nên không thể chỉnh sửa." />;
+    return <NotFoundPage message="PR đã Submit nên không thể chỉnh sửa." />;
   return <RequestFormBody existing={existing} />;
 }
+
 
 function RequestFormBody({ existing }: {existing?: PurchaseRequest;}) {
   const user = useCurrentUser();
@@ -40,7 +43,7 @@ function RequestFormBody({ existing }: {existing?: PurchaseRequest;}) {
   const e = f.visibleErrors;
 
   const save = () => {
-    if (f.values.title.trim().length < 3) {
+    if ((f.values.title || '').trim().length < 3) {
       toast.error('Nhập tiêu đề trước khi lưu nháp.');
       return;
     }

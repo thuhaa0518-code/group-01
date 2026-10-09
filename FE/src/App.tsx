@@ -24,15 +24,18 @@ import { AuditTrailPage } from './pages/AuditTrail';
 import { NotFoundPage } from './pages/NotFound';
 import { AssumptionsPage } from './pages/Assumptions';
 
+import { ErrorBoundary } from './components/ErrorBoundary';
+
 export function App() {
   return (
-    <BrowserRouter>
-      <MotionConfig reducedMotion="user">
-        <ProcurementProvider>
-          <AuthProvider>
-            <Toaster position="top-right" richColors closeButton />
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <MotionConfig reducedMotion="user">
+          <ProcurementProvider>
+            <AuthProvider>
+              <Toaster position="top-right" richColors closeButton />
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
               <Route
                 element={
                 <RequireAuth>
@@ -60,6 +63,6 @@ export function App() {
           </AuthProvider>
         </ProcurementProvider>
       </MotionConfig>
-    </BrowserRouter>);
-
+    </BrowserRouter>
+  </ErrorBoundary>);
 }

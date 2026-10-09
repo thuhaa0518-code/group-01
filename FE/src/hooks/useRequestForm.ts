@@ -17,23 +17,24 @@ function toInput(pr: PurchaseRequest): PRInput {
 
 export function useRequestForm(user: User, existing?: PurchaseRequest) {
   const { state } = useProcurement();
-  const deptBudgets = state.budgets.filter((b) => b.department === user.department);
+  const matchedBudgets = state.budgets.filter((b) => b.department === user.department);
+  const deptBudgets = matchedBudgets.length > 0 ? matchedBudgets : state.budgets;
 
   const [values, setValues] = useState<PRInput>(() =>
-  existing ?
-  toInput(existing) :
-  {
-    title: '',
-    justification: '',
-    department: user.department,
-    costCenter: deptBudgets[0]?.costCenter ?? '',
-    category: '',
-    budgetCode: deptBudgets[0]?.code ?? '',
-    requiredBy: '',
-    deliveryLocation: '',
-    items: [emptyItem()],
-    aiReview: 'none'
-  }
+    existing ?
+    toInput(existing) :
+    {
+      title: '',
+      justification: '',
+      department: user.department || 'Công nghệ thông tin',
+      costCenter: deptBudgets[0]?.costCenter ?? 'CC-IT-01',
+      category: '',
+      budgetCode: deptBudgets[0]?.code ?? 'BGT-IT-2026',
+      requiredBy: '',
+      deliveryLocation: '',
+      items: [emptyItem()],
+      aiReview: 'none'
+    }
   );
   const [showErrors, setShowErrors] = useState(false);
 
@@ -57,14 +58,27 @@ export function useRequestForm(user: User, existing?: PurchaseRequest) {
   const removeItem = (id: string) => setValues((prev) => ({ ...prev, items: prev.items.filter((i) => i.id !== id) }));
 
   const applySuggestion = (s: AISuggestion) =>
-  setValues((prev) => ({
-    ...prev,
-    title: s.title,
-    category: s.category,
-    justification: prev.justification.trim() ? prev.justification : s.justification,
-    items: s.items.map((i) => ({ id: newItemId(), name: i.name, specs: i.specs, quantity: i.quantity, unit: i.unit, estUnitPrice: 0 })),
-    aiReview: 'accepted'
-  }));
+    setValues((prev) => ({
+      ...prev,
+      title: s.title || prev.title,
+      category: s.category || prev.category,
+      justification: prev.justification.trim() ? prev.justification : s.justification,
+      requiredBy: s.requiredBy || prev.requiredBy,
+      deliveryLocation: s.deliveryLocation || prev.deliveryLocation,
+      budgetCode: s.budgetCode || prev.budgetCode,
+      costCenter: s.costCenter || prev.costCenter,
+      items: s.items && s.items.length
+        ? s.items.map((i) => ({
+            id: newItemId(),
+            name: i.name,
+            specs: i.specs,
+            quantity: i.quantity,
+            unit: i.unit,
+            estUnitPrice: i.estUnitPrice ?? 0,
+          }))
+        : prev.items,
+      aiReview: 'accepted',
+    }));
 
   const dismissSuggestion = () => setValues((prev) => ({ ...prev, aiReview: prev.aiReview === 'none' ? 'dismissed' : prev.aiReview }));
 

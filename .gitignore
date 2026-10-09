@@ -9,7 +9,6 @@ env/
 # Node
 node_modules/
 FE/node_modules/
-FE/dist/
 
 # IDE / OS
 .idea/
@@ -18,4 +17,6 @@ FE/dist/
 Thumbs.db
 
 # Vercel
+.vercel
+
 .vercel

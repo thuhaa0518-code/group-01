@@ -24,7 +24,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   manager: ['pr.view', 'approval.manager', 'po.view'],
   finance: ['pr.view', 'approval.finance', 'budget.review', 'po.view', 'reconcile', 'pr.close'],
   procurement: ['pr.view', 'sourcing.manage', 'supplier.manage', 'supplier.view', 'po.view', 'po.create', 'receiving.record', 'pr.close'],
-  admin: ['pr.view', 'budget.manage', 'supplier.view', 'po.view', 'admin.users', 'audit.view', 'category.manage']
+  admin: ALL_PERMISSIONS
 };
 
 export const PERMISSION_LABEL: Record<Permission, string> = {
@@ -59,11 +59,12 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_SUMMARY: Record<Role, string> = {
   employee: 'Tạo PR, theo dõi trạng thái yêu cầu',
-  manager: 'Duyệt, từ chối, yêu cầu chỉnh sửa, chuyển Finance',
+  manager: 'Duyệt, từ chối, yêu cầu chỉnh sửa, chuyển Finance (Chỉ duyệt, không tạo PR)',
   procurement: 'Supplier, Quotation, chọn NCC, tạo PO, ghi nhận Receiving',
   finance: 'Budget Review, đối soát và Close',
   admin: 'Tài khoản, RBAC, Budget, Audit Trail'
 };
+
 
 export function can(user: User | null | undefined, permission: Permission): boolean {
   if (!user) return false;
@@ -77,13 +78,13 @@ const PROCUREMENT_VISIBLE: PRStatus[] = ['approved', 'supplier_selected', 'po_cr
 export function canViewRequest(user: User, pr: PurchaseRequest): boolean {
   switch (user.role) {
     case 'employee':
-      return pr.requesterId === user.id;
+      return pr.requesterId === user.id || pr.department === user.department;
     case 'manager':
-      return pr.requesterId === user.id || pr.department === user.department && pr.status !== 'draft';
+      return pr.requesterId === user.id || pr.status !== 'draft';
     case 'finance':
-      return pr.routedToFinance || FINANCE_VISIBLE.includes(pr.status);
+      return pr.status !== 'draft';
     case 'procurement':
-      return PROCUREMENT_VISIBLE.includes(pr.status);
+      return pr.status !== 'draft';
     case 'admin':
       return true;
   }
