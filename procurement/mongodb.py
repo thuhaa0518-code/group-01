@@ -9,11 +9,11 @@ TMP_CACHE_FILE = '/tmp/procureai_state.json' if os.name != 'nt' else os.path.joi
 def get_mongo_client():
     global _mongo_client
     uri = getattr(settings, 'MONGODB_URI', os.getenv('MONGODB_URI', ''))
-    if not uri or 'cluster0.mongodb.net' in uri:
+    if not uri:
         return None
     if _mongo_client is None:
         try:
-            _mongo_client = MongoClient(uri, serverSelectionTimeoutMS=2000, connectTimeoutMS=2000)
+            _mongo_client = MongoClient(uri, serverSelectionTimeoutMS=4000, connectTimeoutMS=4000)
             # Ping to verify connection
             _mongo_client.admin.command('ping')
         except Exception as e:

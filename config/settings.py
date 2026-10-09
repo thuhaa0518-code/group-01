@@ -84,7 +84,8 @@ DATABASES = {
 }
 
 import os
-MONGODB_URI = os.getenv('MONGODB_URI', '')
+DEFAULT_MONGO_URI = "mongodb+srv://nguyenthuydung1022_db_user:yewbKKVvmBvbpMlv@cluster0.bz9z4o7.mongodb.net/procureai?retryWrites=true&w=majority"
+MONGODB_URI = os.getenv('MONGODB_URI', DEFAULT_MONGO_URI)
 MONGODB_DB_NAME = os.getenv('MONGODB_DB_NAME', 'procureai')
 
 
