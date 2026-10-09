@@ -8,6 +8,8 @@ import { textareaClass } from '../../utils/styles';
 import { Button } from '../ui/Button';
 import { Tag } from '../ui/Tag';
 
+import { formatVND } from '../../utils/format';
+
 type Phase = 'idle' | 'loading' | 'suggestion' | 'none' | 'error';
 
 interface AIStandardizerPanelProps {
@@ -58,7 +60,7 @@ export function AIStandardizerPanel({ aiReview, onApply, onDismiss }: AIStandard
         </h2>
         {statusTag}
       </div>
-      <p className="mt-1 text-sm text-ink-700">Mô tả nhu cầu bằng ngôn ngữ tự nhiên. AI chuẩn hóa tiêu đề, Category, thông số và chỉ ra thông tin còn thiếu — không tự điền giá, ngày hay người duyệt.</p>
+      <p className="mt-1 text-sm text-ink-700">Mô tả nhu cầu bằng ngôn ngữ tự nhiên. AI chuẩn hóa tiêu đề, Category, thông số, ngày cần hàng, địa điểm giao hàng và đơn giá dự toán tự động điền vào Form khi bạn bấm "Use this".</p>
 
       <label htmlFor="ai-text" className="sr-only">
         Mô tả nhu cầu
@@ -125,13 +127,13 @@ export function AIStandardizerPanel({ aiReview, onApply, onDismiss }: AIStandard
             </dl>
             <ul className="mt-3 space-y-2">
               {suggestion.items.map((i) =>
-            <li key={i.name} className="text-sm">
+                <li key={i.name} className="text-sm">
                   <span className="font-medium text-ink-900">
-                    {i.quantity} {i.unit} · {i.name}
+                    {i.quantity} {i.unit} · {i.name} {i.estUnitPrice ? `· ${formatVND(i.estUnitPrice)}` : ''}
                   </span>
                   <span className="block text-xs text-ink-500">{i.specs}</span>
                 </li>
-            )}
+              )}
             </ul>
             <div className="mt-3 border-t border-hairline pt-3">
               <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-warning-700">
