@@ -124,14 +124,28 @@ export function managerDecide(state: ProcurementState, actor: User, id: string, 
   if (g.blockReason) return fail(g.blockReason);
   if (decision !== 'approve' && reason.trim().length < 5) return fail('Vui lòng nhập lý do (tối thiểu 5 ký tự).');
   if (decision === 'approve' && g.approveBlock) return fail(g.approveBlock);
-  const { status, action } = MANAGER_MAP[decision];
+  let status: PRStatus;
+  let action: string;
+  if (decision === 'approve') {
+    if (g.overThreshold) {
+      status = 'finance_review';
+      action = 'Manager phê duyệt (chuyển Finance duyệt tiếp do PR > 50tr)';
+    } else {
+      status = 'approved';
+      action = 'Manager Approve';
+    }
+  } else {
+    status = MANAGER_MAP[decision].status;
+    action = MANAGER_MAP[decision].action;
+  }
+
   let next = patchPR(state, id, {
     status,
     lastReason: reason.trim() || undefined,
-    routedToFinance: pr.routedToFinance || decision === 'finance',
-    approvedAt: decision === 'approve' ? now() : pr.approvedAt
+    routedToFinance: pr.routedToFinance || decision === 'finance' || g.overThreshold,
+    approvedAt: status === 'approved' ? now() : pr.approvedAt
   });
-  if (decision === 'approve') next = commitBudget(next, pr.budgetCode, g.check.requested);
+  if (status === 'approved') next = commitBudget(next, pr.budgetCode, g.check.requested);
   next = withAudit(next, actor, {
     action,
     entity: 'PR',

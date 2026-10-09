@@ -101,8 +101,6 @@ export function managerGuard(user: User, pr: PurchaseRequest, budget?: Budget): 
   blockReason ?? (
   overBudget ?
   'PR vượt Budget khả dụng. Chọn Reject, yêu cầu chỉnh sửa hoặc chuyển Finance kiểm tra ngân sách.' :
-  overThreshold ?
-  `PR trên ${formatCompactVND(FINANCE_THRESHOLD)} cần cả Manager và Finance phê duyệt — hãy chuyển Finance.` :
   undefined);
   return { check, selfApproval, outOfScope, overThreshold, overBudget, blockReason, approveBlock };
 }
