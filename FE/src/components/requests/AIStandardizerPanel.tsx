@@ -98,6 +98,30 @@ export function AIStandardizerPanel({ aiReview, onApply, onDismiss }: AIStandard
                 <dt className="text-xs text-ink-500">Category</dt>
                 <dd className="font-medium text-ink-900">{suggestion.category}</dd>
               </div>
+              {suggestion.requiredBy && (
+                <div>
+                  <dt className="text-xs text-ink-500">Ngày cần hàng</dt>
+                  <dd className="font-medium text-ink-900">{suggestion.requiredBy}</dd>
+                </div>
+              )}
+              {suggestion.deliveryLocation && (
+                <div>
+                  <dt className="text-xs text-ink-500">Địa điểm giao hàng</dt>
+                  <dd className="font-medium text-ink-900">{suggestion.deliveryLocation}</dd>
+                </div>
+              )}
+              {suggestion.budgetCode && (
+                <div>
+                  <dt className="text-xs text-ink-500">Mã ngân sách</dt>
+                  <dd className="font-medium text-ink-900">{suggestion.budgetCode}</dd>
+                </div>
+              )}
+              {suggestion.costCenter && (
+                <div>
+                  <dt className="text-xs text-ink-500">Trung tâm chi phí</dt>
+                  <dd className="font-medium text-ink-900">{suggestion.costCenter}</dd>
+                </div>
+              )}
             </dl>
             <ul className="mt-3 space-y-2">
               {suggestion.items.map((i) =>

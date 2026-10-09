@@ -4,9 +4,13 @@ export interface AISuggestion {
   title: string;
   category: string;
   justification: string;
-  items: {name: string;specs: string;quantity: number;unit: string;}[];
+  items: { name: string; specs: string; quantity: number; unit: string; estUnitPrice?: number }[];
   missing: string[];
-  matched: string[];
+  matched?: string[];
+  requiredBy?: string | null;
+  deliveryLocation?: string | null;
+  budgetCode?: string | null;
+  costCenter?: string | null;
 }
 
 const UNIT_WORDS = ['chiếc', 'cái', 'bộ', 'máy', 'người', 'unit', 'units', 'pcs', 'tờ', 'user'];

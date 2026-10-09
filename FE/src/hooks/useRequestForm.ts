@@ -57,14 +57,27 @@ export function useRequestForm(user: User, existing?: PurchaseRequest) {
   const removeItem = (id: string) => setValues((prev) => ({ ...prev, items: prev.items.filter((i) => i.id !== id) }));
 
   const applySuggestion = (s: AISuggestion) =>
-  setValues((prev) => ({
-    ...prev,
-    title: s.title,
-    category: s.category,
-    justification: prev.justification.trim() ? prev.justification : s.justification,
-    items: s.items.map((i) => ({ id: newItemId(), name: i.name, specs: i.specs, quantity: i.quantity, unit: i.unit, estUnitPrice: 0 })),
-    aiReview: 'accepted'
-  }));
+    setValues((prev) => ({
+      ...prev,
+      title: s.title || prev.title,
+      category: s.category || prev.category,
+      justification: prev.justification.trim() ? prev.justification : s.justification,
+      requiredBy: s.requiredBy || prev.requiredBy,
+      deliveryLocation: s.deliveryLocation || prev.deliveryLocation,
+      budgetCode: s.budgetCode || prev.budgetCode,
+      costCenter: s.costCenter || prev.costCenter,
+      items: s.items && s.items.length
+        ? s.items.map((i) => ({
+            id: newItemId(),
+            name: i.name,
+            specs: i.specs,
+            quantity: i.quantity,
+            unit: i.unit,
+            estUnitPrice: i.estUnitPrice ?? 0,
+          }))
+        : prev.items,
+      aiReview: 'accepted',
+    }));
 
   const dismissSuggestion = () => setValues((prev) => ({ ...prev, aiReview: prev.aiReview === 'none' ? 'dismissed' : prev.aiReview }));
 
