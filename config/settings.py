@@ -11,9 +11,16 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import mimetypes
+
+# Fix Windows registry MIME type issue for JS modules
+mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type("application/javascript", ".mjs", True)
+mimetypes.add_type("text/css", ".css", True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
