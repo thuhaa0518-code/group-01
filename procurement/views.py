@@ -14,7 +14,7 @@ from .models import (
     PriceReference, AuditEntry
 )
 from .forms import LoginForm, UserProfileForm
-from .mongodb import save_state_to_mongo, load_state_from_mongo
+from .mongodb import save_state_to_mongo, load_state_from_mongo, save_state_to_cache, load_state_from_cache
 
 # --- JSON REST API ENDPOINTS FOR FRONTEND (FE INTEGRATION) ---
 
@@ -109,8 +109,8 @@ def api_sync_view(request):
                                     }
                                 )
 
-            # Also update MongoDB with payload directly
-            save_state_to_mongo(payload)
+            # Also update MongoDB & file cache with payload directly
+            save_state_to_cache(payload)
 
             # 3. Sync Quotations
             if 'quotations' in payload:
@@ -197,11 +197,12 @@ def api_sync_view(request):
     return api_state_view(request)
 
 def api_state_view(request):
-    """Returns 100% complete ProcurementState JSON matching FE React state, synchronized with MongoDB"""
-    # Check if state exists in MongoDB
-    mongo_state = load_state_from_mongo()
-    if mongo_state:
-        return JsonResponse(mongo_state)
+    """Returns 100% complete ProcurementState JSON matching FE React state, synchronized with MongoDB/Cache"""
+    # Check if state exists in MongoDB or cache
+    cached_state = load_state_from_cache()
+    if cached_state:
+        return JsonResponse(cached_state)
+
 
     users_qs = User.objects.all()
     requests_qs = PurchaseRequest.objects.all().prefetch_related('items')
