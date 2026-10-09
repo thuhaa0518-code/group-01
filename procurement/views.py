@@ -15,12 +15,29 @@ from .models import (
 )
 from .forms import LoginForm, UserProfileForm
 from .mongodb import save_state_to_mongo, load_state_from_mongo, save_state_to_cache, load_state_from_cache
+from .gemini_service import call_gemini_standardize
 
 # --- JSON REST API ENDPOINTS FOR FRONTEND (FE INTEGRATION) ---
 
 def spa_index_view(request):
     """Serves the integrated React Single Page Application (SPA) index.html"""
     return render(request, 'index.html')
+
+@csrf_exempt
+def api_ai_standardize_view(request):
+    """Call Google Gemini 2.5 Flash API for AI Standardization"""
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+            text = payload.get('text', '')
+            if text:
+                gemini_res = call_gemini_standardize(text)
+                if gemini_res:
+                    return JsonResponse({'ok': True, 'suggestion': gemini_res, 'source': 'gemini'})
+        except Exception as e:
+            print("Gemini API View Error:", e)
+    return JsonResponse({'ok': False, 'suggestion': None, 'source': 'fallback'})
+
 
 @csrf_exempt
 def api_sync_view(request):

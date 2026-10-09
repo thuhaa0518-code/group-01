@@ -12,8 +12,24 @@ export interface AISuggestion {
 const UNIT_WORDS = ['chiếc', 'cái', 'bộ', 'máy', 'người', 'unit', 'units', 'pcs', 'tờ', 'user'];
 const NON_QUANTITY = /^(inch|"|gb|tb|hz|k|mp|w|lumens?|%|tr|triệu|đ|vnd|mb)/;
 
-/** AI chỉ tái cấu trúc nội dung người dùng nhập — không tự điền giá, ngày hay người duyệt. */
-export function standardizeRequest(text: string): Promise<AISuggestion | null> {
+/** AI chỉ tái cấu trúc nội dung người dùng nhập — hỗ trợ Gọi Gemini 2.5 Flash API với fallback NLP nội bộ. */
+export async function standardizeRequest(text: string): Promise<AISuggestion | null> {
+  try {
+    const res = await fetch('/api/v1/ai/standardize/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.ok && data.suggestion) {
+        return data.suggestion as AISuggestion;
+      }
+    }
+  } catch (err) {
+    console.warn('Gemini API endpoint unavailable, falling back to local matcher:', err);
+  }
+
   return new Promise((resolve, reject) => {
     window.setTimeout(() => {
       try {
@@ -21,7 +37,7 @@ export function standardizeRequest(text: string): Promise<AISuggestion | null> {
       } catch (err) {
         reject(err);
       }
-    }, 900);
+    }, 500);
   });
 }
 
