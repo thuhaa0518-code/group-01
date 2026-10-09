@@ -13,7 +13,6 @@ def call_gemini_standardize(text):
     if not api_key:
         return None
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     prompt = f"""
     Bạn là Trợ lý AI Chuyên viên Thu mua doanh nghiệp ProcureAI.
     Nhiệm vụ: Phân tích đoạn văn bản yêu cầu mua sắm thô của người dùng và trích xuất TOÀN BỘ các thông tin có thể có trong văn bản thành duy nhất 1 JSON hợp lệ.
@@ -48,16 +47,21 @@ def call_gemini_standardize(text):
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"responseMimeType": "application/json"}
     }
-    try:
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode('utf-8'),
-            headers={'Content-Type': 'application/json'}
-        )
-        with urllib.request.urlopen(req, timeout=10) as response:
-            res_data = json.loads(response.read().decode('utf-8'))
-            candidate_text = res_data['candidates'][0]['content']['parts'][0]['text']
-            return json.loads(candidate_text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return None
+
+    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"]
+    for model in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode('utf-8'),
+                headers={'Content-Type': 'application/json'}
+            )
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_data = json.loads(response.read().decode('utf-8'))
+                candidate_text = res_data['candidates'][0]['content']['parts'][0]['text']
+                return json.loads(candidate_text)
+        except Exception as e:
+            print(f"Gemini API Error with model {model}: {e}")
+            continue
+    return None
