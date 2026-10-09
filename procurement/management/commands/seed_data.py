@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 'id': 'PR-2026-0103', 'title': 'Bộ bàn phím và chuột không dây cho phòng họp', 'justification': 'Trang bị bàn phím, chuột không dây cho 3 phòng họp để trình chiếu và demo sản phẩm.',
                 'department': 'Công nghệ thông tin', 'cost_center': 'CC-IT-01', 'category': 'Thiết bị CNTT', 'budget_code': 'BGT-IT-2026',
                 'required_by': '2026-10-15', 'delivery_location': 'Tầng 8, Tòa nhà Sông Đà, 18 Phạm Hùng, Hà Nội',
-                'requester_id': 'u-vietanh', 'status': 'pending_manager', 'routed_to_finance': False, 'ai_review': 'accepted',
+                'requester_id': 'u-nam', 'status': 'pending_manager', 'routed_to_finance': False, 'ai_review': 'accepted',
                 'items': [
                     {'id': 'i1', 'name': 'Bộ bàn phím và chuột không dây', 'specs': 'Kết nối Bluetooth + USB receiver, layout US, pin sạc', 'quantity': 3, 'unit': 'bộ', 'est_unit_price': Decimal('1200000')}
                 ]
