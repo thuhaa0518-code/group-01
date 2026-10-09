@@ -44,8 +44,33 @@ export function ProcurementProvider({ children }: {children: ReactNode;}) {
       .then((res) => (res.ok ? res.json() : null))
       .then((data: ProcurementState | null) => {
         if (data && data.users && data.users.length > 0) {
-          ref.current = data;
-          setState(data);
+          setState((prev) => {
+            const serverRequests = data.requests || [];
+            const localOnlyRequests = prev.requests.filter(
+              (pr) => !serverRequests.some((s) => s.id === pr.id)
+            );
+            const serverQuotations = data.quotations || [];
+            const localOnlyQuotations = prev.quotations.filter(
+              (q) => !serverQuotations.some((s) => s.id === q.id)
+            );
+            const serverOrders = data.orders || [];
+            const localOnlyOrders = prev.orders.filter(
+              (o) => !serverOrders.some((s) => s.id === o.id)
+            );
+            const serverReceivings = data.receivings || [];
+            const localOnlyReceivings = prev.receivings.filter(
+              (r) => !serverReceivings.some((s) => s.id === r.id)
+            );
+            const mergedState: ProcurementState = {
+              ...data,
+              requests: [...serverRequests, ...localOnlyRequests],
+              quotations: [...serverQuotations, ...localOnlyQuotations],
+              orders: [...serverOrders, ...localOnlyOrders],
+              receivings: [...serverReceivings, ...localOnlyReceivings],
+            };
+            ref.current = mergedState;
+            return mergedState;
+          });
         }
       })
       .catch(() => {
