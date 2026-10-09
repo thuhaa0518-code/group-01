@@ -14,6 +14,7 @@ import { Alert } from '../components/ui/Alert';
 import { AIStandardizerPanel } from '../components/requests/AIStandardizerPanel';
 import { LineItemsEditor } from '../components/requests/LineItemsEditor';
 import { RequestSummary } from '../components/requests/RequestSummary';
+import { can } from '../utils/permissions';
 import { UnauthorizedPage } from './Unauthorized';
 import { NotFoundPage } from './NotFound';
 
