@@ -23,12 +23,14 @@ export function RequestFormPage() {
   const { state } = useProcurement();
   const existing = id ? state.requests.find((r) => r.id === id) : undefined;
 
+  if (!can(user, 'pr.create')) return <UnauthorizedPage />;
   if (id && !existing) return <NotFoundPage message="Không tìm thấy Purchase Request." />;
   if (existing && existing.requesterId !== user.id) return <UnauthorizedPage />;
   if (existing && existing.status !== 'draft' && existing.status !== 'revision')
-  return <NotFoundPage message="PR đã Submit nên không thể chỉnh sửa." />;
+    return <NotFoundPage message="PR đã Submit nên không thể chỉnh sửa." />;
   return <RequestFormBody existing={existing} />;
 }
+
 
 function RequestFormBody({ existing }: {existing?: PurchaseRequest;}) {
   const user = useCurrentUser();

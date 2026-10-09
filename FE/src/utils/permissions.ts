@@ -59,11 +59,12 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_SUMMARY: Record<Role, string> = {
   employee: 'Tạo PR, theo dõi trạng thái yêu cầu',
-  manager: 'Duyệt, từ chối, yêu cầu chỉnh sửa, chuyển Finance',
+  manager: 'Duyệt, từ chối, yêu cầu chỉnh sửa, chuyển Finance (Chỉ duyệt, không tạo PR)',
   procurement: 'Supplier, Quotation, chọn NCC, tạo PO, ghi nhận Receiving',
   finance: 'Budget Review, đối soát và Close',
   admin: 'Tài khoản, RBAC, Budget, Audit Trail'
 };
+
 
 export function can(user: User | null | undefined, permission: Permission): boolean {
   if (!user) return false;
