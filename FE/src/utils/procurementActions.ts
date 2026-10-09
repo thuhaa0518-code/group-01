@@ -205,12 +205,20 @@ export function addQuotation(state: ProcurementState, actor: User, prId: string,
   if (!fileType) return fail('Chỉ hỗ trợ file Quotation dạng PDF hoặc Excel (.pdf, .xlsx, .xls).');
 
   const seed = hash(supplierId + prId);
-  const factor = 0.9 + seed % 26 / 100;
+  const factor = 0.9 + (seed % 26) / 100;
   const snapshot: QuotationSnapshot = {
-    lines: pr.items.map((i) => ({ itemId: i.id, name: i.name, quantity: i.quantity, unitPrice: Math.round(i.estUnitPrice * factor / 1000) * 1000 })),
+    lines: pr.items.map((i) => {
+      const basePrice = i.estUnitPrice && i.estUnitPrice > 0 ? i.estUnitPrice : 500_000;
+      return {
+        itemId: i.id,
+        name: i.name,
+        quantity: i.quantity,
+        unitPrice: Math.max(50_000, Math.round((basePrice * factor) / 1000) * 1000)
+      };
+    }),
     taxRate: 0.1,
-    shippingFee: seed % 4 * 150_000,
-    deliveryDays: 3 + seed % 10,
+    shippingFee: (seed % 4) * 150_000,
+    deliveryDays: 3 + (seed % 10),
     warrantyMonths: [12, 24, 36][seed % 3]
   };
   const lowConfidence: QuotationField[] = seed % 2 ? ['shippingFee'] : ['deliveryDays'];
@@ -222,7 +230,7 @@ export function addQuotation(state: ProcurementState, actor: User, prId: string,
     fileName,
     fileType,
     status: 'extracted',
-    aiConfidence: Math.min(0.97, 0.74 + seed % 20 / 100),
+    aiConfidence: Math.min(0.97, 0.74 + (seed % 20) / 100),
     lowConfidence,
     editedFields: [],
     original: snapshot,
@@ -244,8 +252,8 @@ export function updateQuotation(state: ProcurementState, actor: User, qid: strin
   if (!q) return fail('Không tìm thấy Quotation.');
   const pr = state.requests.find((r) => r.id === q.prId);
   if (pr?.status !== 'approved') return fail('Không thể sửa Quotation sau khi đã chọn Supplier (ASM-04).');
-  if (patch.lines.some((l) => !(l.unitPrice > 0)) || patch.taxRate < 0 || patch.shippingFee < 0 || patch.deliveryDays <= 0 || patch.warrantyMonths < 0)
-  return fail('Giá trị không hợp lệ. Đơn giá, thời gian giao hàng phải lớn hơn 0.');
+  if (!patch.lines || patch.lines.length === 0 || patch.lines.some((l) => !(l.unitPrice > 0)) || patch.taxRate < 0 || patch.shippingFee < 0 || patch.deliveryDays <= 0 || patch.warrantyMonths < 0)
+    return fail('Giá trị không hợp lệ. Đơn giá, thời gian giao hàng phải lớn hơn 0.');
   const o = q.original;
   const edited: QuotationField[] = [];
   if (patch.lines.some((l, i) => l.unitPrice !== o.lines[i]?.unitPrice)) edited.push('unitPrice');
@@ -255,13 +263,13 @@ export function updateQuotation(state: ProcurementState, actor: User, qid: strin
   if (patch.warrantyMonths !== o.warrantyMonths) edited.push('warrantyMonths');
   let next: ProcurementState = {
     ...state,
-    quotations: state.quotations.map((x) => x.id === qid ? { ...x, ...patch, editedFields: edited, status: 'extracted' } : x)
+    quotations: state.quotations.map((x) => (x.id === qid ? { ...x, ...patch, editedFields: edited, status: 'extracted' } : x))
   };
   next = withAudit(next, actor, {
     action: 'Chỉnh sửa dữ liệu AI extraction',
     entity: 'Quotation',
     entityId: qid,
-    details: edited.length ? `Trường đã sửa so với file gốc: ${edited.join(', ')} · Tổng mới ${formatVND(quotationTotal(patch))}` : 'Không thay đổi so với file gốc'
+    details: edited.length ? `Trường đã sửa so với file gốc: ${edited.join(', ')} · Tổng mới ${formatVND(quotationTotal(patch))}` : 'Không thay đổi so me file gốc'
   });
   return { ok: true, state: next };
 }
@@ -270,7 +278,9 @@ export function confirmQuotation(state: ProcurementState, actor: User, qid: stri
   if (!can(actor, 'sourcing.manage')) return fail('Bạn không có quyền xác nhận Quotation.');
   const q = state.quotations.find((x) => x.id === qid);
   if (!q) return fail('Không tìm thấy Quotation.');
-  let next: ProcurementState = { ...state, quotations: state.quotations.map((x) => x.id === qid ? { ...x, status: 'confirmed' } : x) };
+  if (!q.lines || q.lines.length === 0 || q.lines.some((l) => !(l.unitPrice > 0)))
+    return fail('Quotation có đơn giá không hợp lệ. Vui lòng chỉnh sửa đơn giá trước khi xác nhận.');
+  let next: ProcurementState = { ...state, quotations: state.quotations.map((x) => (x.id === qid ? { ...x, status: 'confirmed' } : x)) };
   next = withAudit(next, actor, {
     action: 'Xác nhận dữ liệu AI extraction',
     entity: 'Quotation',

@@ -24,7 +24,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   manager: ['pr.view', 'approval.manager', 'po.view'],
   finance: ['pr.view', 'approval.finance', 'budget.review', 'po.view', 'reconcile', 'pr.close'],
   procurement: ['pr.view', 'sourcing.manage', 'supplier.manage', 'supplier.view', 'po.view', 'po.create', 'receiving.record', 'pr.close'],
-  admin: ['pr.create', 'pr.view', 'budget.manage', 'supplier.view', 'po.view', 'admin.users', 'audit.view', 'category.manage']
+  admin: ALL_PERMISSIONS
 };
 
 export const PERMISSION_LABEL: Record<Permission, string> = {
