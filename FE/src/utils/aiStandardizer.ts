@@ -83,11 +83,18 @@ function analyze(text: string): AISuggestion | null {
 }
 
 function extractDate(text: string): string | null {
-  const m = text.match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})/);
+  let m = text.match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})/);
   if (m) {
     const day = m[1].padStart(2, '0');
     const month = m[2].padStart(2, '0');
     const year = m[3];
+    return `${year}-${month}-${day}`;
+  }
+  m = text.match(/(\d{1,2})[\/\.-](\d{1,2})/);
+  if (m) {
+    const day = m[1].padStart(2, '0');
+    const month = m[2].padStart(2, '0');
+    const year = new Date().getFullYear();
     return `${year}-${month}-${day}`;
   }
   return null;
@@ -97,20 +104,23 @@ function extractLocation(text: string): string | null {
   const m = text.match(/(giao tại|tại|giao ở|địa điểm:?)\s*([^.,;\n]+)/i);
   if (m) {
     let loc = m[2].trim();
-    loc = loc.replace(/\s*(trước|hạn|ngày|\d{1,2}[\/\.-]).*$/i, '').trim();
+    loc = loc.replace(/\s*(giao|trước|hạn|ngày|\d{1,2}[\/\.-]).*$/i, '').trim();
     if (loc.length >= 3) return loc.charAt(0).toUpperCase() + loc.slice(1);
   }
   return null;
 }
 
 function extractPrice(text: string): number | undefined {
-  const m = text.match(/(\d+(?:[\.,]\d+)?)\s*(triệu|tr|trđ|đ|vnd)/i);
+  const m = text.match(/(\d+(?:[\.,]\d+)?)\s*(triệu|tr|trđ|triệu đồng|tỷ|k|đ|vnd)/i);
   if (m) {
     const val = parseFloat(m[1].replace(',', '.'));
     const unit = m[2].toLowerCase();
     if (unit.includes('triệu') || unit === 'tr' || unit === 'trđ') {
       return val * 1_000_000;
     }
+    if (unit === 'k') return val * 1_000;
+    if (unit === 'tỷ') return val * 1_000_000_000;
+    if (unit === 'đ' || unit === 'vnd') return val;
   }
   return undefined;
 }

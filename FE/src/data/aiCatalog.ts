@@ -25,7 +25,7 @@ export const aiCatalog: AICatalogEntry[] = [
   missing: ['Kích thước mặt bàn', 'Màu sắc / loại chất liệu gỗ']
 },
 {
-  keywords: ['ghế'], shortName: 'ghế công thái học', category: 'Nội thất văn phòng', itemName: 'Ghế công thái học lưng lưới', unit: 'chiếc',
+  keywords: ['ghế công thái học', 'ghế xoay', 'ghế lưới', 'ghế làm việc', 'ghế cá nhân'], shortName: 'ghế công thái học', category: 'Nội thất văn phòng', itemName: 'Ghế công thái học lưng lưới', unit: 'chiếc',
   specs: 'Tựa đầu, tay 4D, đệm ngồi trượt, chịu tải ≥ 120kg, bảo hành ≥ 36 tháng',
   missing: ['Màu sắc / chất liệu theo nhận diện văn phòng']
 },
