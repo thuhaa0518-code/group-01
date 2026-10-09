@@ -58,4 +58,14 @@ export const aiCatalog: AICatalogEntry[] = [
   keywords: ['brochure', 'tờ rơi', 'in ấn', 'standee'], shortName: 'ấn phẩm in', category: 'In ấn & Marketing', itemName: 'Brochure A4 gấp 3', unit: 'tờ',
   specs: 'Giấy C150, in 4 màu 2 mặt, cán mờ',
   missing: ['File thiết kế đã duyệt', 'Số lượng theo từng loại ấn phẩm']
+},
+{
+  keywords: ['bút', 'bút bi', 'bút mực', 'bút ký', 'viết'], shortName: 'bút viết văn phòng', category: 'Văn phòng phẩm', itemName: 'Bút bi / Bút ký văn phòng cao cấp', unit: 'cây',
+  specs: 'Mực bi / mực gel 0.5mm, ngòi trơn nét đều, thiết kế văn phòng',
+  missing: ['Loại ngòi và màu mực (xanh / đen / đỏ)']
+},
+{
+  keywords: ['giấy', 'giấy in', 'văn phòng phẩm', 'sổ'], shortName: 'văn phòng phẩm', category: 'Văn phòng phẩm', itemName: 'Giấy in A4 / Văn phòng phẩm tiêu chuẩn', unit: 'ram',
+  specs: 'Định lượng 70–80gsm, độ trắng ≥ 90%, in 2 mặt không kẹt giấy',
+  missing: ['Định lượng và thương hiệu mong muốn']
 }];

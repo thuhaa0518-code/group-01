@@ -48,31 +48,62 @@ export async function standardizeRequest(text: string): Promise<AISuggestion | n
 function analyze(text: string): AISuggestion | null {
   if (text.length > 1200) throw new Error('Nội dung quá dài để AI phân tích. Rút gọn dưới 1.200 ký tự và thử lại.');
   const lower = text.toLowerCase();
-  const matches = aiCatalog.filter((e) => e.keywords.some((k) => lower.includes(k)));
-  if (!matches.length) return null;
+  
+  const matches = aiCatalog.filter((e) => {
+    const matchedKeyword = e.keywords.find((k) => lower.includes(k));
+    if (!matchedKeyword) return false;
+    const hasBetterMatch = aiCatalog.some((other) => {
+      if (other === e) return false;
+      const otherKeyword = other.keywords.find((k) => lower.includes(k));
+      return otherKeyword && otherKeyword.length > matchedKeyword.length && otherKeyword.includes(matchedKeyword);
+    });
+    return !hasBetterMatch;
+  });
 
   const requiredBy = extractDate(text);
   const deliveryLocation = extractLocation(text);
   const estUnitPrice = extractPrice(text);
 
-  const items = matches.map((m) => ({
-    name: m.itemName,
-    specs: m.specs,
-    quantity: extractQuantity(lower, m.keywords) ?? 1,
-    unit: m.unit,
-    estUnitPrice: estUnitPrice ?? 0,
-  }));
+  let items: { name: string; specs: string; quantity: number; unit: string; estUnitPrice?: number }[] = [];
+  let category = 'Văn phòng phẩm';
+  let title = 'Yêu cầu mua sắm';
+
+  if (matches.length > 0) {
+    const primary = matches[0];
+    category = primary.category;
+    title = matches.length > 1 ? `Mua ${primary.shortName} và thiết bị kèm theo` : `Mua ${primary.shortName}`;
+    items = matches.map((m) => ({
+      name: m.itemName,
+      specs: m.specs,
+      quantity: extractQuantity(lower, m.keywords) ?? 1,
+      unit: m.unit,
+      estUnitPrice: estUnitPrice ?? 0,
+    }));
+  } else {
+    // Dynamic fallback for ANY unlisted product!
+    const productName = extractProductName(text);
+    category = guessCategory(lower);
+    title = `Mua ${productName}`;
+    const qty = extractQuantity(lower, []) ?? 1;
+    const unit = extractUnit(lower) ?? 'cái';
+    items = [{
+      name: productName.charAt(0).toUpperCase() + productName.slice(1),
+      specs: `Yêu cầu mua ${productName} theo mô tả của người dùng`,
+      quantity: qty,
+      unit,
+      estUnitPrice: estUnitPrice ?? 0,
+    }];
+  }
 
   const missing: string[] = [];
   if (!requiredBy) missing.push('Ngày cần hàng');
   if (!deliveryLocation) missing.push('Địa điểm giao hàng');
   if (!estUnitPrice) missing.push('Đơn giá dự toán từng dòng');
 
-  const primary = matches[0];
   const trimmed = text.trim();
   return {
-    title: matches.length > 1 ? `Mua ${primary.shortName} và thiết bị kèm theo` : `Mua ${primary.shortName}`,
-    category: primary.category,
+    title,
+    category,
     justification: trimmed.charAt(0).toUpperCase() + trimmed.slice(1),
     items,
     requiredBy,
@@ -80,6 +111,33 @@ function analyze(text: string): AISuggestion | null {
     missing,
     matched: matches.map((m) => m.shortName)
   };
+}
+
+function extractProductName(text: string): string {
+  const m = text.match(/(mua|cần|sắm|yêu cầu)\s+(\d+\s*(?:cây|cái|chiếc|bộ|hộp|ram|quyển|tờ|thùng|bọc|gói)?\s*)?([^,.\n]+)/i);
+  if (m && m[3]) {
+    let name = m[3].trim();
+    name = name.replace(/\s*(giá|giao|tại|trước|hạn|ngày|\d+).*/i, '').trim();
+    if (name.length >= 2) return name;
+  }
+  return 'sản phẩm / dịch vụ';
+}
+
+function guessCategory(lower: string): string {
+  if (/(bút|giấy|sổ|văn phòng phẩm|mực|kéo|kẹp|thước)/.test(lower)) return 'Văn phòng phẩm';
+  if (/(laptop|máy tính|màn hình|chuột|bàn phím|ram|ssd|máy in)/.test(lower)) return 'Thiết bị CNTT';
+  if (/(bàn|ghế|tủ|kệ|nội thất)/.test(lower)) return 'Nội thất văn phòng';
+  if (/(máy chiếu|loa|micro|phòng họp)/.test(lower)) return 'Thiết bị phòng họp';
+  if (/(in|brochure|standee|marketing|tờ rơi)/.test(lower)) return 'In ấn & Marketing';
+  return 'Phần mềm & Dịch vụ';
+}
+
+function extractUnit(lower: string): string | undefined {
+  const units = ['cây', 'bộ', 'cái', 'chiếc', 'hộp', 'ram', 'quyển', 'tờ', 'thùng', 'bọc', 'gói', 'máy', 'người', 'unit', 'pcs'];
+  for (const u of units) {
+    if (new RegExp(`\\b${u}\\b`, 'i').test(lower)) return u;
+  }
+  return undefined;
 }
 
 function extractDate(text: string): string | null {
