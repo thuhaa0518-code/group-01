@@ -17,7 +17,7 @@
 | Artifact | Giá trị |
 |---|---|
 | Magic Patterns (wireframe tương tác) | https://www.magicpatterns.com/c/utapnp7s8wvsxbtcfalh2b |
-| Figma | https://www.figma.com/design/XwhEcVr768Olq9gDiSoIpV/Group-1?node-id=0-1 |
+| Figma | https://www.figma.com/design/Nc2pw0GQqNe3EzENakz79z/Group-1?node-id=0-1&p=f&t=FaKBsIFcslHisgTk-0 |
 | Figma page | `ProcureAI Wireframes` |
 | Code UI | React + TypeScript (xem mục 14) |
 
