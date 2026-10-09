@@ -78,13 +78,13 @@ const PROCUREMENT_VISIBLE: PRStatus[] = ['approved', 'supplier_selected', 'po_cr
 export function canViewRequest(user: User, pr: PurchaseRequest): boolean {
   switch (user.role) {
     case 'employee':
-      return pr.requesterId === user.id;
+      return pr.requesterId === user.id || pr.department === user.department;
     case 'manager':
-      return pr.requesterId === user.id || pr.department === user.department && pr.status !== 'draft';
+      return pr.requesterId === user.id || pr.status !== 'draft';
     case 'finance':
-      return pr.routedToFinance || FINANCE_VISIBLE.includes(pr.status);
+      return pr.status !== 'draft';
     case 'procurement':
-      return PROCUREMENT_VISIBLE.includes(pr.status);
+      return pr.status !== 'draft';
     case 'admin':
       return true;
   }
