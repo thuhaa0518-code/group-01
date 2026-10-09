@@ -193,9 +193,7 @@ class Gov01Gov02AutomatedTests(TestCase):
             secure_api_approve_handler(self.mgr, pr_self, 'approved')
         self.assertIn("BUG-SEC-01", str(ctx.exception))
 
-        # 2. Tái hiện và xác nhận hành vi thực tế của /api/v1/sync/ (Live Endpoint Verification)
-        # Endpoint hiện tại nhận state đồng bộ từ Frontend. Test xác minh endpoint phản hồi HTTP 200
-        # và ghi nhận rằng tầng API cần được tăng cường guard kiểm tra requester != actor như đã log trong BUG-SEC-01.
+        # 2. Kiểm thử bảo mật tầng API /api/v1/sync/ (Live Endpoint Verification sau fix BUG-0001)
         sync_payload = {
             'requests': [
                 {
@@ -204,16 +202,60 @@ class Gov01Gov02AutomatedTests(TestCase):
                 }
             ]
         }
-        response = self.client.post(
+
+        # Case 2A: Nỗ lực bypass qua Session đăng nhập của chính người tạo PR (usr-mgr-01)
+        self.client.force_login(self.mgr)
+        resp_session = self.client.post(
             '/api/v1/sync/',
             data=json.dumps(sync_payload),
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 200)
-
-        # Kiểm tra trạng thái sau sync phản ánh chính xác defect BUG-SEC-01 đã được phân loại
+        self.assertEqual(resp_session.status_code, 403)
+        self.assertIn("No Self-Approval", resp_session.json().get('error', ''))
         pr_self.refresh_from_db()
-        self.assertEqual(pr_self.status, 'approved')
+        self.assertEqual(pr_self.status, 'pending_manager', "Trạng thái PR phải giữ nguyên pending_manager khi bị chặn")
+
+        # Case 2B: Nỗ lực bypass qua actorId gửi trong JSON payload
+        self.client.logout()
+        sync_payload_actor = {
+            'actorId': self.mgr.id,
+            'requests': [
+                {
+                    'id': pr_self.id,
+                    'status': 'approved'
+                }
+            ]
+        }
+        resp_payload = self.client.post(
+            '/api/v1/sync/',
+            data=json.dumps(sync_payload_actor),
+            content_type='application/json'
+        )
+        self.assertEqual(resp_payload.status_code, 403)
+        self.assertIn("No Self-Approval", resp_payload.json().get('error', ''))
+        pr_self.refresh_from_db()
+        self.assertEqual(pr_self.status, 'pending_manager')
+
+        # Case 2C: Nỗ lực duyệt ẩn danh không cung cấp Actor identity
+        resp_anon = self.client.post(
+            '/api/v1/sync/',
+            data=json.dumps(sync_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(resp_anon.status_code, 403)
+        pr_self.refresh_from_db()
+        self.assertEqual(pr_self.status, 'pending_manager')
+
+        # Case 2D: Trường hợp hợp lệ - Admin hoặc Manager có thẩm quyền khác phê duyệt
+        self.client.force_login(self.adm)
+        resp_valid = self.client.post(
+            '/api/v1/sync/',
+            data=json.dumps(sync_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(resp_valid.status_code, 200)
+        pr_self.refresh_from_db()
+        self.assertEqual(pr_self.status, 'approved', "Phải chuyển thành approved khi người duyệt hợp lệ")
 
     def test_tc_gov01_003_rbac_matrix_5_roles(self):
         """

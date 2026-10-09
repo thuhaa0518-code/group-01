@@ -16,6 +16,9 @@ Thư mục `docs/06-testing/` được chuẩn hóa thành 5 phân hệ chức n
 docs/06-testing/
 ├── README.md                      <-- Trang chủ & Mục lục điều hướng tổng thể (Bạn đang ở đây)
 │
+├── final-test-report.md           (Báo cáo kiểm thử cuối cùng sau đợt Retest & Regression QA-10)
+├── release-readiness.md           (Đánh giá mức độ sẵn sàng phát hành & Cổng chất lượng Release Gates)
+│
 ├── 01-plans/                      <-- CHIẾN LƯỢC, KẾ HOẠCH & MA TRẬN TRUY VẾT
 │   ├── qa-inventory.md            (Đánh giá hiện trạng kiểm thử & Audit cơ sở mã nguồn)
 │   ├── test-strategy.md           (Chiến lược kiểm thử toàn diện theo kiến trúc thực tế)
@@ -36,20 +39,26 @@ docs/06-testing/
 │   ├── BUG_TRACKER.md             (Sổ theo dõi khiếm khuyết chính thức IEEE 1044 / ISO 29119-3)
 │   └── bug-triage-report.md       (Báo cáo sàng lọc lỗi, RCA, kế hoạch sửa & 1 Release Blocker)
 │
-└── evidence/                      <-- BẰNG CHỨNG THỰC THI KIỂM THỬ THEO RUN ID
-    ├── RUN-20261009-212600/       (Batch 1: US-01, US-02 — 6 TCs PASS)
-    ├── RUN-20261009-213800/       (Batch 2: US-03, US-04, US-05 — 10 TCs PASS)
-    ├── RUN-20261009-214300/       (Batch 3: US-06, US-07 — 7 TCs PASS)
-    ├── RUN-20261009-214700/       (Batch 4: US-08, US-09, US-10 — 9 TCs PASS)
-    ├── RUN-20261009-215300/       (Batch 5: GOV-01, GOV-02 — 5 TCs PASS)
-    ├── RUN-20261009-220000/       (QA-07 Master Full Suite Execution — 53 Tests PASS)
-    ├── run-20261009-144500/       (Historical Baseline Run)
-    └── run-20261009-remediation-group1/ (Historical Remediation Run)
+├── evidence/                      <-- BẰNG CHỨNG THỰC THI KIỂM THỬ THEO RUN ID
+│   ├── RUN-20261010-004600/       (QA-12 Local Demo Smoke Test & Manual Checklist — VERIFIED WITH LIMITATIONS)
+│   ├── RUN-20261010-000500/       (QA-10 Retest BUG-0001 & Regression Verification — 53 Tests PASS)
+│   ├── RUN-20261009-220000/       (QA-07 Master Full Suite Execution — 53 Tests PASS)
+│   ├── RUN-20261009-215300/       (Batch 5: GOV-01, GOV-02 — 5 TCs PASS)
+│   ├── RUN-20261009-214700/       (Batch 4: US-08, US-09, US-10 — 9 TCs PASS)
+│   ├── RUN-20261009-214300/       (Batch 3: US-06, US-07 — 7 TCs PASS)
+│   ├── RUN-20261009-213800/       (Batch 2: US-03, US-04, US-05 — 10 TCs PASS)
+│   ├── RUN-20261009-212600/       (Batch 1: US-01, US-02 — 6 TCs PASS)
+│   ├── run-20261009-144500/       (Historical Baseline Run)
+│   └── run-20261009-remediation-group1/ (Historical Remediation Run)
 ```
 
 ---
 
 ## 2. Bảng Chỉ Mục Tài Liệu Chi Tiết (Detailed Documentation Map)
+
+### 📌 Tài liệu Bàn Giao Phát Hành (Release Deliverables)
+- [**Báo cáo Kiểm thử Cuối cùng (`final-test-report.md`)**](final-test-report.md): Tổng hợp kết quả retest, ma trận đối chiếu lệnh thực tế, đánh giá hồi quy toàn diện.
+- [**Đánh giá Sẵn sàng Phát hành (`release-readiness.md`)**](release-readiness.md): Đánh giá 7 cổng chất lượng kỹ thuật, phân biệt BUILD PASS vs RELEASE READY, điều kiện nghiệm thu Staging/Production.
 
 ### 📌 Phân hệ 01: Chiến Lược & Kế Hoạch (`01-plans/`)
 - [**Đánh giá Hiện trạng Kiểm thử (`qa-inventory.md`)**](01-plans/qa-inventory.md): Kiểm kê toàn diện kiến trúc Django + React Vite, rà soát 18 FRs, 3 NFRs và 4 rủi ro lớn.
@@ -68,25 +77,24 @@ docs/06-testing/
 - [**Sổ Đăng ký Test Cases Dạng CSV (`test-case-register.csv`)**](03-test-cases/test-case-register.csv): Bảng dữ liệu cấu trúc phục vụ lọc theo Priority, Owner, Status, Run ID.
 
 ### 📌 Phân hệ 04: Quản Lý Khiếm Khuyết (`04-defects/`)
-- [**Sổ Theo dõi Khiếm khuyết Chính thức (`BUG_TRACKER.md`)**](04-defects/BUG_TRACKER.md): Đăng ký và theo dõi toàn diện 9 defects (4 closed, 5 triaged) với đầy đủ 18 trường thông tin IEEE 1044.
-- [**Báo cáo Phân loại & Sàng lọc Lỗi (`bug-triage-report.md`)**](04-defects/bug-triage-report.md): Đánh giá duy nhất 1 Release Blocker (`BUG-0001`), phân tích RCA và kế hoạch sửa lỗi.
+- [**Sổ Theo dõi Khiếm khuyết Chính thức (`BUG_TRACKER.md`)**](04-defects/BUG_TRACKER.md): Đăng ký và theo dõi toàn diện 9 defects (4 closed, 4 triaged, 1 verified) với đầy đủ 18 trường thông tin IEEE 1044.
+- [**Báo cáo Phân loại & Sàng lọc Lỗi (`bug-triage-report.md`)**](04-defects/bug-triage-report.md): Đánh giá Release Blocker (`BUG-0001`), phân tích RCA và kế hoạch giải quyết.
 
 ### 📌 Phân hệ 05: Bằng Chứng Thực Thi (`evidence/`)
+- [**Bằng chứng Smoke Test Local Demo QA-12 (`evidence/RUN-20261010-004600/`)**](evidence/RUN-20261010-004600/execution-summary.md): Xác minh khởi chạy máy chủ cục bộ 127.0.0.1:8000, 6 HTTP contracts PASS, bảng kiểm thử thủ công UI 6 kịch bản.
+- [**Bằng chứng Retest & Regression QA-10 (`evidence/RUN-20261010-000500/`)**](evidence/RUN-20261010-000500/execution-summary.md): Xác minh thành công BUG-0001, full regression 53/53 tests PASS.
 - [**Bằng chứng Tổng hợp Đợt chạy QA-07 (`evidence/RUN-20261009-220000/`)**](evidence/RUN-20261009-220000/execution-summary.md): Master run 53/53 tests PASS, kết quả lint, typecheck và production build.
-- [**Bằng chứng Batch 1 (`evidence/RUN-20261009-212600/`)**](evidence/RUN-20261009-212600/execution-summary.md): US-01 & US-02 (6 TCs PASS).
-- [**Bằng chứng Batch 2 (`evidence/RUN-20261009-213800/`)**](evidence/RUN-20261009-213800/execution-summary.md): US-03, US-04 & US-05 (10 TCs PASS).
-- [**Bằng chứng Batch 3 (`evidence/RUN-20261009-214300/`)**](evidence/RUN-20261009-214300/execution-summary.md): US-06 & US-07 (7 TCs PASS).
-- [**Bằng chứng Batch 4 (`evidence/RUN-20261009-214700/`)**](evidence/RUN-20261009-214700/execution-summary.md): US-08, US-09 & US-10 (9 TCs PASS).
-- [**Bằng chứng Batch 5 (`evidence/RUN-20261009-215300/`)**](evidence/RUN-20261009-215300/execution-summary.md): GOV-01 & GOV-02 (5 TCs PASS).
+- [**Bằng chứng Batch 1 đến 5 (`evidence/RUN-20261009-212600/` .. `215300/`)**](evidence/RUN-20261009-215300/execution-summary.md): Toàn bộ 5 đợt triển khai automated tests theo từng batch.
 
 ---
 
 ## 3. Tóm Tắt Tình Trạng Chất Lượng Hệ Thống (Quality Status Summary)
 
 | Chỉ số Chất lượng | Giá trị Thực tế | Tỷ lệ Đạt | Đánh giá |
-| :--- | :---: | :---: | :---: |
+| :--- | :--- | :---: | :---: |
 | **Test Cases Thiết kế** | 34 / 34 TCs | **100%** | Bao phủ 100% Acceptance Criteria của 12 US |
 | **Test Cases Tự động hóa** | 34 / 34 TCs PASS | **100%** | Hoàn thành trọn vẹn qua 5 batch kiểm thử tự động |
-| **Tổng số Backend Tests** | 53 / 53 Tests PASS | **100%** | Chạy trong 0.224s, 0 lỗi hồi quy (Zero Regression) |
-| **Frontend Production Build** | PASS (31.57s) | **100%** | Đóng gói thành công bundle `FE/dist/` |
-| **Release Blockers** | **1 Blocker** (`BUG-0001`) | — | Đang ở trạng thái `TRIAGED`, chờ phê duyệt sửa code |
+| **Tổng số Backend Tests** | 53 / 53 Tests PASS | **100%** | Chạy trong 0.301s, 0 lỗi hồi quy (Zero Regression) |
+| **Frontend Production Build** | PASS (34.83s) | **100%** | Đóng gói thành công bundle `FE/dist/` |
+| **Release Blockers** | **0 Blocker Active** | — | `BUG-0001` đã được sửa và **VERIFIED** thành công |
+| **Quyết định Phát hành** | • **Local Demo:** `LOCAL DEMO VERIFIED WITH LIMITATIONS`<br/>• **Staging / UAT:** `NOT VERIFIED`<br/>• **Production:** `BLOCKED / NOT READY` | — | Đã kiểm chứng thực tế bằng smoke test runtime và checklist UI (QA-12) |

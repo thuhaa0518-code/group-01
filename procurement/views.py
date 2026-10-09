@@ -28,6 +28,15 @@ def api_sync_view(request):
         try:
             payload = json.loads(request.body.decode('utf-8'))
             
+            # Extract actor information from session, header or payload
+            current_actor_id = None
+            if request.user.is_authenticated:
+                current_actor_id = getattr(request.user, 'id', None)
+            if not current_actor_id:
+                current_actor_id = request.headers.get('X-Actor-Id') or request.META.get('HTTP_X_ACTOR_ID')
+            if not current_actor_id and isinstance(payload, dict):
+                current_actor_id = payload.get('actorId') or payload.get('actor_id') or payload.get('currentUserId')
+
             # 1. Sync Users
             if 'users' in payload:
                 for u_data in payload['users']:
@@ -54,6 +63,29 @@ def api_sync_view(request):
                     if pr_id:
                         pr = PurchaseRequest.objects.filter(id=pr_id).first()
                         if pr:
+                            new_status = req_data.get('status')
+                            # Security Guard: Enforce No Self-Approval at backend API layer (BUG-0001 / BUG-SEC-01)
+                            if new_status == 'approved' and pr.status != 'approved':
+                                req_actor_id = req_data.get('actorId') or req_data.get('approvedBy') or current_actor_id
+                                if not req_actor_id and 'audit' in payload and isinstance(payload['audit'], list):
+                                    for a in reversed(payload['audit']):
+                                        if a.get('entityId') == pr_id and a.get('toStatus') == 'approved':
+                                            req_actor_id = a.get('actorId')
+                                            break
+                                requester_id = pr.requester.id if pr.requester else None
+                                if req_actor_id and requester_id and str(req_actor_id) == str(requester_id):
+                                    return JsonResponse({
+                                        'error': 'QUY TẮC AN TOÀN (No Self-Approval): Không thể tự phê duyệt Yêu cầu do chính mình tạo ra! (BUG-SEC-01)',
+                                        'code': 'SELF_APPROVAL_FORBIDDEN',
+                                        'pr_id': pr_id
+                                    }, status=403)
+                                if not req_actor_id:
+                                    return JsonResponse({
+                                        'error': 'YÊU CẦU XÁC THỰC: Thao tác phê duyệt Yêu cầu mua sắm bắt buộc phải có thông tin danh tính người duyệt (Actor) hợp lệ.',
+                                        'code': 'APPROVAL_ACTOR_REQUIRED',
+                                        'pr_id': pr_id
+                                    }, status=403)
+
                             if 'status' in req_data: pr.status = req_data['status']
                             if 'routedToFinance' in req_data: pr.routed_to_finance = req_data['routedToFinance']
                             if 'aiReview' in req_data: pr.ai_review = req_data['aiReview']

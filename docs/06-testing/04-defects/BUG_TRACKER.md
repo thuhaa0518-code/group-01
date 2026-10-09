@@ -43,7 +43,7 @@ graph LR
 
 | Bug ID | Tóm tắt lỗi (Summary) | Loại lỗi (Type) | US / REQ Liên kết | Severity | Priority | Trạng thái (Status) | Primary Owner | Assignee | Bằng chứng thực tế (Evidence) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- | :--- | :--- |
-| **`BUG-0001`**<br/>*(BUG-SEC-01)* | Thiếu server-side actor check tại `/api/v1/sync/` có thể bypass No Self-Approval | Security | `GOV-01`<br/>`REQ-NFR-02` | **Critical** | **P1 (Blocker)** | **TRIAGED** | Nguyễn Thị Thùy Dung | Nguyễn Thị Thùy Dung | [`RUN-20261009-220000`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/execution-log.txt#L55)<br/>[`TC-GOV01-002`](file:///d:/LTUD/group-01%20-%20LTUDDN/procurement/test_gov01_gov02.py#L145) |
+| **`BUG-0001`**<br/>*(BUG-SEC-01)* | Thiếu server-side actor check tại `/api/v1/sync/` có thể bypass No Self-Approval | Security | `GOV-01`<br/>`REQ-NFR-02` | **Critical** | **P1 (Blocker)** | **VERIFIED** | Nguyễn Thị Thùy Dung | Nguyễn Thị Thùy Dung | [`RUN-20261010-000500`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261010-000500/execution-summary.md)<br/>[`TC-GOV01-002`](file:///d:/LTUD/group-01%20-%20LTUDDN/procurement/test_gov01_gov02.py#L145) |
 | **`BUG-0002`**<br/>*(BUG-FE-01)* | Lỗi cú pháp assignment trong biểu thức điều kiện tại `aiStandardizer.ts:72` | UI / Lint | `US-03`<br/>`REQ-FR-03` | **Medium** | **P2 (High)** | **TRIAGED** | Trần Thị Kiều Giang | Trần Thị Kiều Giang | [`RUN-20261009-220000`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/execution-log.txt#L155)<br/>`npm run lint` Exit 1 |
 | **`BUG-0003`**<br/>*(BUG-FE-02)* | Arrow function rỗng vi phạm linter tại `ProcurementContext.tsx:76` | UI / Lint | `US-01`<br/>`REQ-FR-01` | **Low** | **P3 (Medium)** | **TRIAGED** | Trần Thị Kiều Giang | Trần Thị Kiều Giang | [`RUN-20261009-220000`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/execution-log.txt#L143)<br/>`npm run lint` Exit 1 |
 | **`BUG-0004`**<br/>*(BUG-TS-01)* | TypeScript compiler báo 69 lỗi typecheck trong mã nguồn `FE/src/` | UI / Types | `US-01..10`<br/>`REQ-NFR-01` | **Medium** | **P2 (High)** | **TRIAGED** | Trần Thị Kiều Giang | Trần Thị Kiều Giang | [`RUN-20261009-220000`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/execution-log.txt#L159)<br/>`tsc --noEmit` Exit 1 |
@@ -68,12 +68,12 @@ graph LR
   - **Requirement ID:** `REQ-NFR-02`
   - **Acceptance Criteria:** `AC-GOV-01`
   - **Test Case ID:** [`TC-GOV01-002`](file:///d:/LTUD/group-01%20-%20LTUDDN/procurement/test_gov01_gov02.py#L145)
-  - **Run ID:** [`RUN-20261009-215300`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-215300/), [`RUN-20261009-220000`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/)
+  - **Run ID:** [`RUN-20261009-215300`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-215300/), [`RUN-20261009-220000`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/), [`RUN-20261010-000500`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261010-000500/)
 - **Primary Owner (US):** Nguyễn Thị Thùy Dung (Backend Developer)
 - **Assignee:** Nguyễn Thị Thùy Dung (Backend Developer)
 - **Reporter:** Trần Thị Thu Hà (QA / Tester)
 - **Severity:** `Critical` | **Priority:** `P1 (Blocker)`
-- **Trạng thái:** `TRIAGED`
+- **Trạng thái:** `VERIFIED`
 - **Môi trường:** Python 3.13.0, Django 5.1.1, SQLite, Windows 11 Enterprise
 - **Preconditions:**
   - Manager B (`usr-mgr-01`) tạo PR `PR-GOV01-BYPASS-01` với trạng thái ban đầu là `pending_manager`.
@@ -99,14 +99,15 @@ graph LR
   - View [`api_sync_view`](file:///d:/LTUD/group-01%20-%20LTUDDN/procurement/views.py#L25) trong `procurement/views.py` hiện tại đọc payload và cập nhật trực tiếp `pr.status = req_data['status']` mà không kiểm tra danh tính người gửi (`actor != pr.requester`).
   - Server trả về `HTTP 200 OK`, bản ghi trong database bị đổi trạng thái thành `approved`.
 - **Bằng chứng thực tế:**
-  - Tệp log: [`execution-log.txt`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/execution-log.txt#L55).
+  - Tệp log ban đầu: [`execution-log.txt`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261009-220000/execution-log.txt#L55).
+  - Tệp log retest thành công: [`RUN-20261010-000500/execution-log.txt`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/06-testing/evidence/RUN-20261010-000500/execution-log.txt).
   - Test method: `Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01`.
 - **Căn nguyên (Root Cause):**
   - Endpoint `/api/v1/sync/` được thiết kế theo cơ chế đồng bộ trạng thái phi tập trung (state synchronization) từ SPA Frontend, chưa tích hợp Middleware kiểm tra phiên đăng nhập và xác thực thẩm quyền RBAC/No Self-Approval ở tầng tiếp nhận payload HTTP POST.
 - **Phương án khắc phục đề xuất (Proposed Fix):**
   - Trong hàm `api_sync_view` tại `procurement/views.py`, khi xử lý cập nhật trạng thái `status == 'approved'`, trích xuất thông tin người dùng từ request session/token hoặc payload actor; nếu `actor_id == pr.requester_id`, từ chối cập nhật và trả về `JsonResponse({"error": "No Self-Approval violation"}, status=403)`.
 - **Retest Plan:** Chạy lại `python manage.py test procurement.test_gov01_gov02` sau khi áp dụng fix.
-- **Resolution:** Chưa đóng (Đang chờ duyệt kế hoạch sửa).
+- **Resolution:** `VERIFIED` — Đã retest và xác minh thành công tại phiên `RUN-20261010-000500` qua `TC-GOV01-002`. Cả 4 kịch bản (Session, Payload, Anonymous, Valid Approver) đều hoạt động chính xác theo đặc tả bảo mật; toàn bộ regression suite 53/53 tests PASS 100%. Sẵn sàng chờ Tech Lead / Owner phê duyệt đóng (`CLOSED`).
 
 ---
 

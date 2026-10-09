@@ -38,12 +38,14 @@ Sau đợt thực thi kiểm thử toàn diện tại phiên `RUN-20261009-22000
 ### 🚨 DUY NHẤT 1 RELEASE BLOCKER: `BUG-0001`
 - **Mã lỗi:** `BUG-0001` (Cũ: `BUG-SEC-01`).
 - **Mức độ:** **Critical / P1 (Blocker)**.
+- **Trạng thái hiện tại:** **VERIFIED** (Đã retest và xác minh thành công tại phiên `RUN-20261010-000500`, sẵn sàng để đóng).
 - **Lý do xem là Blocker:**
   - Vi phạm yêu cầu phi chức năng bắt buộc [`REQ-NFR-02`](file:///d:/LTUD/group-01%20-%20LTUDDN/docs/01-discovery/5.requirements.md): *"Quy tắc bảo mật phân quyền No Self-Approval (Người tạo PR tuyệt đối không được tự phê duyệt PR của mình)"*.
-  - Mặc dù tầng domain logic đã chặn thành công (được kiểm chứng qua [`TC-GOV01-001`](file:///d:/LTUD/group-01%20-%20LTUDDN/procurement/test_gov01_gov02.py#L106)), tầng API endpoint `/api/v1/sync/` vẫn chấp nhận payload đổi trạng thái từ client mà chưa có middleware thẩm tra `actor != pr.requester`.
-- **Điều kiện gỡ bỏ Blocker:**
-  - Backend bổ sung guard thẩm tra quyền tại hàm `api_sync_view` trong `procurement/views.py`.
-  - Retest kịch bản `TC-GOV01-002` phản hồi `HTTP 403 Forbidden` thành công.
+  - Mặc dù tầng domain logic đã chặn thành công (được kiểm chứng qua [`TC-GOV01-001`](file:///d:/LTUD/group-01%20-%20LTUDDN/procurement/test_gov01_gov02.py#L106)), tầng API endpoint `/api/v1/sync/` trước đó vẫn chấp nhận payload đổi trạng thái từ client mà chưa có middleware thẩm tra `actor != pr.requester`.
+- **Tiến độ xử lý:**
+  - Backend đã bổ sung guard thẩm tra quyền tại hàm `api_sync_view` trong `procurement/views.py`.
+  - Đã retest chính thức tại phiên `RUN-20261010-000500` qua `TC-GOV01-002`: Phản hồi `HTTP 403 Forbidden` thành công trên cả Session, Payload và Anonymous access; cho phép `HTTP 200 OK` với người duyệt hợp lệ.
+  - Toàn bộ 53 tests trong backend regression suite đều PASS 100%. Đã chuyển trạng thái sang `VERIFIED`.
 
 ---
 
