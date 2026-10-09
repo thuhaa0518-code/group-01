@@ -9,7 +9,6 @@ env/
 # Node
 node_modules/
 FE/node_modules/
-FE/dist/
 
 # IDE / OS
 .idea/
