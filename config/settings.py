@@ -83,6 +83,10 @@ DATABASES = {
     }
 }
 
+import os
+MONGODB_URI = os.getenv('MONGODB_URI', '')
+MONGODB_DB_NAME = os.getenv('MONGODB_DB_NAME', 'procureai')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators

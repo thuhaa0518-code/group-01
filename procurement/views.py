@@ -14,6 +14,7 @@ from .models import (
     PriceReference, AuditEntry
 )
 from .forms import LoginForm, UserProfileForm
+from .mongodb import save_state_to_mongo, load_state_from_mongo
 
 # --- JSON REST API ENDPOINTS FOR FRONTEND (FE INTEGRATION) ---
 
@@ -147,7 +148,12 @@ def api_sync_view(request):
     return api_state_view(request)
 
 def api_state_view(request):
-    """Returns 100% complete ProcurementState JSON matching FE React state"""
+    """Returns 100% complete ProcurementState JSON matching FE React state, synchronized with MongoDB"""
+    # Check if state exists in MongoDB
+    mongo_state = load_state_from_mongo()
+    if mongo_state:
+        return JsonResponse(mongo_state)
+
     users_qs = User.objects.all()
     requests_qs = PurchaseRequest.objects.all().prefetch_related('items')
     quotations_qs = Quotation.objects.all()
@@ -235,4 +241,8 @@ def api_state_view(request):
             } for a in audit_qs
         ]
     }
+
+    # Save to MongoDB if connected
+    save_state_to_mongo(state)
     return JsonResponse(state)
+
