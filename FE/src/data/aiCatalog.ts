@@ -1,3 +1,8 @@
+// ==============================================================================
+// USER STORY 03 (US-03): AI PR Standardizer Catalog Seed Data
+// Tập dữ liệu mẫu cung cấp từ khóa và cấu trúc sản phẩm chuẩn cho AI Standardizer.
+// ==============================================================================
+
 export interface AICatalogEntry {
   keywords: string[];
   shortName: string;
@@ -19,6 +24,12 @@ export const aiCatalog: AICatalogEntry[] = [
   specs: 'Tấm nền IPS, độ phân giải 2560×1440, cổng HDMI + USB-C, chân điều chỉnh độ cao',
   missing: ['Kích thước và độ phân giải mong muốn', 'Cổng kết nối tương thích với máy hiện có']
 },
+{
+  keywords: ['sofa', 'ghế sofa', 'bộ sofa', 'salon', 'sofa văn phòng'], shortName: 'sofa văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ ghế sofa văn phòng tiếp khách cao cấp', unit: 'bộ',
+  specs: 'Khung gỗ tự nhiên bọc da/nỉ cao cấp, đệm mút D40 chống xẹp, bao gồm 1 ghế dài và 2 ghế đơn tiếp khách',
+  missing: ['Chất liệu bọc (Da / Nỉ / Simili)', 'Kích thước cụ thể theo diện tích phòng']
+},
+
 {
   keywords: ['bàn ghế', 'bàn gỗ', 'bàn làm việc'], shortName: 'bàn ghế văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ bàn ghế gỗ cao cấp', unit: 'bộ',
   specs: 'Gỗ tự nhiên/công nghiệp cao cấp, bao gồm bàn làm việc và ghế đồng bộ, thiết kế hiện đại',

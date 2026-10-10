@@ -25,7 +25,16 @@ def spa_index_view(request):
 
 @csrf_exempt
 def api_ai_standardize_view(request):
-    """Call Google Gemini 2.5 Flash API for AI Standardization"""
+    """
+    [US-03 REST API View Endpoint]
+    Đường dẫn HTTP POST `/api/v1/ai/standardize/` tiếp nhận văn bản thô từ Frontend.
+    
+    Đầu vào:
+        request (HttpRequest): Đã được mã hóa JSON với body `{"text": "..."}`
+    Đầu ra:
+        JsonResponse: `{"ok": True, "suggestion": {...}, "source": "gemini"}` nếu thành công,
+                      `{"ok": False, "suggestion": None, "source": "fallback"}` nếu thất bại/offline.
+    """
     if request.method == 'POST':
         try:
             payload = json.loads(request.body.decode('utf-8'))

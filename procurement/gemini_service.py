@@ -1,9 +1,26 @@
+# ==============================================================================
+# USER STORY 03 (US-03): AI PR Standardizer & Natural Language Review Service
+# Tệp này chứa logic gọi dịch vụ AI Google Gemini 2.5 Flash / 1.5 Flash để bóc tách,
+# chuẩn hóa văn bản mua sắm thô thành đối tượng JSON 9 trường dữ liệu chuẩn.
+# ==============================================================================
+
 import os
 import json
 import urllib.request
 from django.conf import settings
 
 def call_gemini_standardize(text):
+    """
+    [US-03 AI Service Core Function]
+    Hàm gọi API Google Gemini AI để chuẩn hóa văn bản yêu cầu mua sắm thô (NLP).
+    
+    Đầu vào:
+        text (str): Văn bản thô do người dùng nhập (VD: "Cần 2 bộ sofa tiếp khách phòng Giám đốc...")
+    Đầu ra:
+        dict: Kết quả JSON gồm 9 trường (title, category, justification, items, requiredBy, deliveryLocation, budgetCode, costCenter, missing)
+        None: Trả về None nếu không phát hiện API Key hoặc cả 4 mô hình Gemini đều thất bại.
+    """
+    # 1. Trích xuất GEMINI_API_KEY từ settings Django hoặc biến môi trường .env / Vercel
     api_key = (
         getattr(settings, 'GEMINI_API_KEY', '') or
         os.getenv('GEMINI_API_KEY', '') or
@@ -13,30 +30,37 @@ def call_gemini_standardize(text):
     if not api_key:
         return None
     
+    # 2. Xây dựng System Prompt ràng buộc Gemini xuất JSON chuẩn xác 1 trong 6 danh mục
     prompt = f"""
     Bạn là Trợ lý AI Chuyên viên Thu mua doanh nghiệp ProcureAI.
     Nhiệm vụ: Phân tích đoạn văn bản yêu cầu mua sắm thô của người dùng và trích xuất TOÀN BỘ các thông tin có thể có trong văn bản thành duy nhất 1 JSON hợp lệ.
 
     Cấu trúc JSON bắt buộc:
     {{
-      "title": "Tiêu đề yêu cầu mua sắm ngắn gọn (ví dụ: Mua Laptop cho nhóm Backend)",
-      "category": "Chọn 1 trong các danh mục chính xác: Thiết bị CNTT, In ấn & Marketing, Phần mềm & Dịch vụ, Nội thất văn phòng, Văn phòng phẩm, Thiết bị phòng họp",
+      "title": "Tiêu đề yêu cầu mua sắm ngắn gọn (ví dụ: Mua sofa tiếp khách phòng Giám đốc)",
+      "category": "Chọn CHÍNH XÁC 1 trong 6 danh mục sau tùy theo sản phẩm/dịch vụ:
+        - 'Nội thất văn phòng' (dành cho sofa, salon, bàn, ghế, tủ, kệ, đồ gỗ, rèm, thảm, vách ngăn...)
+        - 'Thiết bị CNTT' (dành cho laptop, máy tính, màn hình, chuột, bàn phím, ram, ssd, máy in, server...)
+        - 'Văn phòng phẩm' (dành cho bút, giấy, sổ, mực, kéo, kẹp, bìa, ghim...)
+        - 'Thiết bị phòng họp' (dành cho máy chiếu, loa, micro, tivi phòng họp, màn chiếu...)
+        - 'In ấn & Marketing' (dành cho in brochure, standee, poster, băng rôn, tờ rơi...)
+        - 'Phần mềm & Dịch vụ' (dành cho phần mềm, bản quyền, license, cloud, hosting, vps, bảo trì, tư vấn, dịch vụ...)",
       "justification": "Mục đích sử dụng / lý do mua sắm được viết lại chuyên nghiệp, rõ ràng",
       "items": [
         {{
-          "name": "Tên sản phẩm chuẩn",
+          "name": "Tên sản phẩm chuẩn (ví dụ: Bộ ghế sofa văn phòng tiếp khách)",
           "specs": "Thông số kỹ thuật chi tiết",
           "quantity": 1,
-          "unit": "chiếc",
+          "unit": "chiếc hoặc bộ",
           "estUnitPrice": 0
         }}
       ],
-      "requiredBy": "Định dạng YYYY-MM-DD nếu văn bản có nêu ngày/thời hạn cần hàng (ví dụ: '2026-10-20'), nếu không nêu thì để null",
-      "deliveryLocation": "Địa điểm giao hàng đầy đủ nếu văn bản có nêu (ví dụ: 'Tầng 5, Keangnam, Hà Nội'), nếu không nêu thì để null",
-      "budgetCode": "Mã ngân sách nếu văn bản có nêu (ví dụ: 'BGT-IT-2026'), nếu không nêu thì để null",
-      "costCenter": "Trung tâm chi phí nếu văn bản có nêu (ví dụ: 'CC-IT-01'), nếu không nêu thì để null",
+      "requiredBy": "Định dạng YYYY-MM-DD nếu văn bản có nêu ngày/thời hạn cần hàng (ví dụ: '2026-10-16'), nếu không nêu thì để null",
+      "deliveryLocation": "Địa điểm giao hàng đầy đủ nếu văn bản có nêu (ví dụ: 'Tầng 8 tòa nhà An Phát'), nếu không nêu thì để null",
+      "budgetCode": "Mã ngân sách nếu văn bản có nêu (ví dụ: 'BGT-OPS-2026'), nếu không nêu thì để null",
+      "costCenter": "Trung tâm chi phí nếu văn bản có nêu (ví dụ: 'CC-OPS-01'), nếu không nêu thì để null",
       "missing": [
-        "Cảnh báo các thông tin quan trọng còn thiếu (ví dụ: chưa có Ngày cần hàng, chưa có Địa điểm giao hàng...)"
+        "Cảnh báo các thông tin quan trọng còn thiếu (ví dụ: chưa có Đơn giá dự toán từng dòng...)"
       ]
     }}
 
@@ -48,7 +72,8 @@ def call_gemini_standardize(text):
         "generationConfig": {"responseMimeType": "application/json"}
     }
 
-    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"]
+    # 3. Chuỗi Fallback thử nghiệm 4 mô hình Gemini theo thứ tự ưu tiên
+    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-lite"]
     for model in models_to_try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
         try:
@@ -60,8 +85,10 @@ def call_gemini_standardize(text):
             with urllib.request.urlopen(req, timeout=10) as response:
                 res_data = json.loads(response.read().decode('utf-8'))
                 candidate_text = res_data['candidates'][0]['content']['parts'][0]['text']
+                print(f"Gemini API Success with model: {model}")
                 return json.loads(candidate_text)
         except Exception as e:
             print(f"Gemini API Error with model {model}: {e}")
             continue
     return None
+

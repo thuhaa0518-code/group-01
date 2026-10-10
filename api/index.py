@@ -8,9 +8,16 @@ if root_dir not in sys.path:
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
+# ==============================================================================
+# USER STORY 03 (US-03): Vercel Serverless WSGI Entrypoint Handler
+# Chịu trách nhiệm khởi tạo WSGI Application tiếp nhận mọi HTTP Request 
+# gửi tới `/api/v1/ai/standardize/` trên môi trường Vercel Cloud Serverless.
+# ==============================================================================
+
 from django.core.wsgi import get_wsgi_application
 
 app = get_wsgi_application()
 
-# Alias handler for Vercel
+# Alias handler cho Vercel Serverless Function
 handler = app
+
