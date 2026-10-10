@@ -784,3 +784,16 @@ pm run build PASS (biên dịch module Vite thành công) với xác nhận ch�
 8. **Bug được phát hiện hoặc cập nhật:** Giữ nguyên trạng thái bug tracker, không sửa code.
 9. **Quyết định của người dùng đã được áp dụng:** Định dạng thuyết trình không dùng slide; từng cá nhân tự thuyết minh và trực tiếp thao tác trên phân hệ/US mình sở hữu; kết hợp chạy lệnh kiểm thử và thử nghiệm tấn công bảo mật trực tiếp trước Hội đồng.
 10. **Các giới hạn, việc chưa thực hiện và bước đang chờ phê duyệt:** Chờ nhóm thực hành tập dượt theo kịch bản mới trước buổi bảo vệ chính thức.
+
+### AI-E2E-LIVE-TEST - Thiết Lập Kiểm Thử Tự Động Giao Diện Thật (Playwright Live E2E) Trên Vercel & Localhost
+1. **Ngày/giờ thực hiện:** 2026-10-10T13:04:00+07:00.
+2. **Mục tiêu:** Đáp ứng yêu cầu của người dùng về việc tự động hóa kiểm thử nhảy sang trình duyệt thật (Headed E2E Testing) cho phân hệ `US-10` và `GOV-02` của Trần Thị Thu Hà, hỗ trợ kiểm thử trực tiếp trên ứng dụng Vercel Cloud (`https://procure-ai-app-topaz.vercel.app`) và môi trường máy trạm.
+3. **Công việc đã làm:**
+   - Cài đặt thư viện `playwright` và Chromium headless shell qua `playwright install chromium`.
+   - Phát hiện và xử lý lỗi khởi tạo bundle JavaScript (Temporal Dead Zone) tại `FE/src/utils/permissions.ts` do biến `ALL_PERMISSIONS` được tham chiếu trước khi khai báo; tái đóng gói bundle bằng Vite build (`cmd.exe /c "npm run build"`).
+   - Viết script `test_e2e_us10_live.py` tự động mở trình duyệt Chromium (`slow_mo=900ms`), đăng nhập quyền Kế toán/Finance `finance1`, kiểm tra khóa chặn Close PR tại `PO-2026-0041` (hàng chưa về), đối soát 3 chiều và đóng PR tại `PO-2026-0038` (đã nhận đủ), kiểm tra vết kiểm toán tại `/audit`.
+   - Tối ưu hóa điều hướng sang chế độ `domcontentloaded` để tương thích hoàn toàn với nền tảng Vercel Cloud Production.
+4. **Kết quả xác minh:**
+   - Chạy `python -u test_e2e_us10_live.py` trên Vercel: PASS 100% (cả 3 Test Cases đều đạt).
+   - Bộ 53 Backend Integration Tests (`python manage.py test`): 53/53 PASS trong 0.248s.
+   - Cập nhật kịch bản thuyết trình của Hà tại `docs/08-presentation/thu-ha-presentation-script.md`.

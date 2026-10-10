@@ -19,14 +19,6 @@ export type Permission =
 'audit.view' |
 'category.manage';
 
-export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  employee: ['pr.create', 'pr.view', 'po.view'],
-  manager: ['pr.view', 'approval.manager', 'po.view'],
-  finance: ['pr.view', 'approval.finance', 'budget.review', 'po.view', 'reconcile', 'pr.close'],
-  procurement: ['pr.view', 'sourcing.manage', 'supplier.manage', 'supplier.view', 'po.view', 'po.create', 'receiving.record', 'pr.close'],
-  admin: ALL_PERMISSIONS
-};
-
 export const PERMISSION_LABEL: Record<Permission, string> = {
   'pr.create': 'Tạo & chỉnh sửa PR của mình',
   'pr.view': 'Xem Purchase Request (theo phạm vi)',
@@ -48,6 +40,14 @@ export const PERMISSION_LABEL: Record<Permission, string> = {
 };
 
 export const ALL_PERMISSIONS = Object.keys(PERMISSION_LABEL) as Permission[];
+
+export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
+  employee: ['pr.create', 'pr.view', 'po.view'],
+  manager: ['pr.view', 'approval.manager', 'po.view'],
+  finance: ['pr.view', 'approval.finance', 'budget.review', 'po.view', 'reconcile', 'pr.close'],
+  procurement: ['pr.view', 'sourcing.manage', 'supplier.manage', 'supplier.view', 'po.view', 'po.create', 'receiving.record', 'pr.close'],
+  admin: ALL_PERMISSIONS
+};
 
 export const ROLE_LABEL: Record<Role, string> = {
   employee: 'Employee',

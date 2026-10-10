@@ -110,6 +110,22 @@ python manage.py test -v 2
 
 ---
 
+### BƯỚC 4B (TÙY CHỌN NÂNG CAO): DEMO LIVE E2E AUTOMATION TEST TRÊN VERCEL CLOUD (~30 giây)
+
+> 💡 *Chiêu ghi điểm tuyệt đối: Bật Terminal và chạy lệnh test tự động điều khiển Trình duyệt thật trên đám mây Vercel:*
+
+```bash
+python test_e2e_us10_live.py
+```
+
+> 🎙️ *(Hà bật mic dõng dạc giới thiệu khi robot tự mở trình duyệt Chrome thao tác trên Vercel)*:  
+> *"Thưa Thầy/Cô, không chỉ dừng lại ở Backend tests, nhóm em đã xây dựng kịch bản **End-to-End Automation Testing** sử dụng Playwright, kiểm thử trực tiếp trên ứng dụng đã triển khai tại Vercel: `https://procure-ai-app-topaz.vercel.app`.
+> - Robot đang tự động đăng nhập vai trò Kế toán, kiểm tra cơ chế khóa chặn Close khi hàng chưa về (`PO-2026-0041`).
+> - Sau đó robot tự động mở đơn đã nhận đủ hàng (`PO-2026-0038`), thực hiện đối soát 3 chiều, tự điền biên bản tài chính, đóng đơn hàng thành công và kiểm tra Audit Trail!
+> - Toàn bộ quy trình diễn ra tự động 100% trước mắt Hội đồng mà không cần chạm tay vào phím chuột!"*
+
+---
+
 ### BƯỚC 5: BÁO CÁO MINH BẠCH VỀ BUILD, LỖI TỒN ĐỌNG & KẾT LUẬN RELEASE GATE (~45 giây)
 
 > 🎙️ *"Với tinh thần trách nhiệm của một Senior QA Lead, em xin báo cáo hoàn toàn trung thực với Hội đồng về các chỉ số kỹ thuật còn lại:
