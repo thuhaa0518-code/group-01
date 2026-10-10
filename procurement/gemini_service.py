@@ -54,7 +54,7 @@ def call_gemini_standardize(text):
         "generationConfig": {"responseMimeType": "application/json"}
     }
 
-    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"]
+    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-lite"]
     for model in models_to_try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
         try:
@@ -66,6 +66,7 @@ def call_gemini_standardize(text):
             with urllib.request.urlopen(req, timeout=10) as response:
                 res_data = json.loads(response.read().decode('utf-8'))
                 candidate_text = res_data['candidates'][0]['content']['parts'][0]['text']
+                print(f"Gemini API Success with model: {model}")
                 return json.loads(candidate_text)
         except Exception as e:
             print(f"Gemini API Error with model {model}: {e}")
