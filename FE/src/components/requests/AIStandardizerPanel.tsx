@@ -18,13 +18,18 @@ interface AIStandardizerPanelProps {
   onDismiss: () => void;
 }
 
+// ==============================================================================
+// USER STORY 03 (US-03): AI PR Standardizer Frontend UI Component
+// Component hiển thị giao diện nhập văn bản mô tả nhu cầu bằng ngôn ngữ tự nhiên,
+// quản lý các trạng thái UI (idle, loading, suggestion, error) và nút hành động "Use this".
+// ==============================================================================
+
 export function AIStandardizerPanel({ aiReview, onApply, onDismiss }: AIStandardizerPanelProps) {
   const [text, setText] = useState('');
   const [phase, setPhase] = useState<Phase>('idle');
   const [suggestion, setSuggestion] = useState<AISuggestion | null>(null);
   const [error, setError] = useState('');
   const [inputError, setInputError] = useState('');
-
   const run = async () => {
     if (text.trim().length < 10) {
       setInputError('Mô tả nhu cầu tối thiểu 10 ký tự để AI phân tích.');
@@ -41,6 +46,7 @@ export function AIStandardizerPanel({ aiReview, onApply, onDismiss }: AIStandard
       setPhase('error');
     }
   };
+
 
   const statusTag =
   aiReview === 'accepted' ?

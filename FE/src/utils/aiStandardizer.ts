@@ -16,7 +16,14 @@ export interface AISuggestion {
 const UNIT_WORDS = ['chiếc', 'cái', 'bộ', 'máy', 'người', 'unit', 'units', 'pcs', 'tờ', 'user'];
 const NON_QUANTITY = /^(inch|"|gb|tb|hz|k|mp|w|lumens?|%|tr|triệu|đ|vnd|mb)/;
 
-/** AI chỉ tái cấu trúc nội dung người dùng nhập — hỗ trợ Gọi Gemini 2.5 Flash API với fallback NLP nội bộ. */
+/** 
+ * [US-03 Frontend AI Dispatcher]
+ * Hàm bất đồng bộ đóng gói HTTP POST gửi văn bản thô tới Backend Gemini Endpoint (/api/v1/ai/standardize/).
+ * Nếu Backend offline hoặc API Gemini lỗi, tự động chuyển hướng qua bộ xử lý NLP Fallback nội bộ `analyze(text)`.
+ * 
+ * Đầu vào: text (string) - Văn bản thô người dùng gõ vào AI Panel.
+ * Đầu ra: Promise<AISuggestion | null> - Gợi ý chuẩn hóa 9 trường thông tin.
+ */
 export async function standardizeRequest(text: string): Promise<AISuggestion | null> {
   try {
     const res = await fetch('/api/v1/ai/standardize/', {
@@ -45,6 +52,11 @@ export async function standardizeRequest(text: string): Promise<AISuggestion | n
   });
 }
 
+/**
+ * [US-03 Offline NLP Analyzer Fallback]
+ * Bộ xử lý phân tích cú pháp quy tắc nội bộ client khi không có kết nối tới Server/Gemini API.
+ * Bóc tách danh mục, sản phẩm, số lượng, địa điểm, ngày giao hàng và ước tính đơn giá.
+ */
 function analyze(text: string): AISuggestion | null {
   if (text.length > 1200) throw new Error('Nội dung quá dài để AI phân tích. Rút gọn dưới 1.200 ký tự và thử lại.');
   const lower = text.toLowerCase();
@@ -80,7 +92,7 @@ function analyze(text: string): AISuggestion | null {
       estUnitPrice: estUnitPrice ?? 0,
     }));
   } else {
-    // Dynamic fallback for ANY unlisted product!
+    // Dynamic fallback cho bất kỳ sản phẩm nào chưa có sẵn trong Catalogue mẫu
     const productName = extractProductName(text);
     category = guessCategory(lower);
     title = `Mua ${productName}`;
@@ -113,6 +125,10 @@ function analyze(text: string): AISuggestion | null {
   };
 }
 
+/**
+ * [US-03 Product Name Extractor]
+ * Bóc tách tên sản phẩm động từ văn bản tiếng Việt sau các động từ "mua", "cần", "sắm".
+ */
 function extractProductName(text: string): string {
   const m = text.match(/(mua|cần|sắm|yêu cầu)\s+(\d+\s*(?:cây|cái|chiếc|bộ|hộp|ram|quyển|tờ|thùng|bọc|gói)?\s*)?([^,.\n]+)/i);
   if (m && m[3]) {
@@ -123,14 +139,21 @@ function extractProductName(text: string): string {
   return 'sản phẩm / dịch vụ';
 }
 
+/**
+ * [US-03 Category Guessing Engine]
+ * Đánh giá biểu thức chính quy (Regex) phân loại chính xác 1 trong 6 danh mục mua sắm chuẩn.
+ * Đặc biệt hỗ trợ nhận diện các từ khóa nội thất ('sofa', 'salon', 'bàn', 'ghế'...) -> 'Nội thất văn phòng'.
+ */
 function guessCategory(lower: string): string {
-  if (/(bút|giấy|sổ|văn phòng phẩm|mực|kéo|kẹp|thước)/.test(lower)) return 'Văn phòng phẩm';
-  if (/(laptop|máy tính|màn hình|chuột|bàn phím|ram|ssd|máy in)/.test(lower)) return 'Thiết bị CNTT';
-  if (/(bàn|ghế|tủ|kệ|nội thất)/.test(lower)) return 'Nội thất văn phòng';
-  if (/(máy chiếu|loa|micro|phòng họp)/.test(lower)) return 'Thiết bị phòng họp';
-  if (/(in|brochure|standee|marketing|tờ rơi)/.test(lower)) return 'In ấn & Marketing';
-  return 'Phần mềm & Dịch vụ';
+  if (/(bút|giấy|sổ|văn phòng phẩm|mực|kéo|kẹp|thước|bìa|ghim|băng dính)/.test(lower)) return 'Văn phòng phẩm';
+  if (/(laptop|máy tính|màn hình|chuột|bàn phím|ram|ssd|máy in|server|ổ cứng|pc|workstation)/.test(lower)) return 'Thiết bị CNTT';
+  if (/(bàn|ghế|tủ|kệ|nội thất|sofa|salon|giường|đồ gỗ|rèm|thảm|vách ngăn|bàn làm việc)/.test(lower)) return 'Nội thất văn phòng';
+  if (/(máy chiếu|loa|micro|phòng họp|tivi|màn chiếu|soundbar|camera họp)/.test(lower)) return 'Thiết bị phòng họp';
+  if (/(in|brochure|standee|marketing|tờ rơi|băng rôn|quảng cáo|poster|catalogue)/.test(lower)) return 'In ấn & Marketing';
+  if (/(phần mềm|dịch vụ|bảo trì|bản quyền|license|cloud|vps|hosting|domain|tư vấn|sửa chữa|đào tạo)/.test(lower)) return 'Phần mềm & Dịch vụ';
+  return 'Văn phòng phẩm';
 }
+
 
 function extractUnit(lower: string): string | undefined {
   const units = ['cây', 'bộ', 'cái', 'chiếc', 'hộp', 'ram', 'quyển', 'tờ', 'thùng', 'bọc', 'gói', 'máy', 'người', 'unit', 'pcs'];
@@ -140,6 +163,7 @@ function extractUnit(lower: string): string | undefined {
   return undefined;
 }
 
+/** [US-03 Date Extractor] Bóc tách ngày cần hàng định dạng ISO YYYY-MM-DD từ chuỗi DD/MM hoặc DD/MM/YYYY */
 function extractDate(text: string): string | null {
   let m = text.match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})/);
   if (m) {
@@ -158,6 +182,7 @@ function extractDate(text: string): string | null {
   return null;
 }
 
+/** [US-03 Location Extractor] Bóc tách địa điểm giao hàng sau các cụm từ "tại", "giao tại", "ở" */
 function extractLocation(text: string): string | null {
   const m = text.match(/(giao tại|tại|giao ở|địa điểm:?)\s*([^.,;\n]+)/i);
   if (m) {
@@ -168,6 +193,7 @@ function extractLocation(text: string): string | null {
   return null;
 }
 
+/** [US-03 Price Extractor] Bóc tách ước tính đơn giá từ từ khóa "triệu", "tr", "k", "đ", "vnd" */
 function extractPrice(text: string): number | undefined {
   const m = text.match(/(\d+(?:[\.,]\d+)?)\s*(triệu|tr|trđ|triệu đồng|tỷ|k|đ|vnd)/i);
   if (m) {
@@ -183,6 +209,7 @@ function extractPrice(text: string): number | undefined {
   return undefined;
 }
 
+/** [US-03 Quantity Extractor] Bóc tách số lượng sản phẩm dựa trên đơn vị tính hoặc số đứng trước từ khóa */
 function extractQuantity(lower: string, keywords: string[]): number | undefined {
   for (const k of keywords) {
     const idx = lower.indexOf(k);
@@ -193,6 +220,7 @@ function extractQuantity(lower: string, keywords: string[]): number | undefined 
   }
   return pickQuantity(lower);
 }
+
 
 function pickQuantity(text: string): number | undefined {
   const re = /(\d{1,4})\s*([^\s\d,.;]*)/g;

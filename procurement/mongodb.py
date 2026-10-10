@@ -35,18 +35,29 @@ def get_mongo_db():
     return client[db_name]
 
 def save_state_to_mongo(state_data):
-    """Saves complete procurement state dictionary into MongoDB 'procure_state' collection."""
+    """
+    [US-03 Persistent DB Storage]
+    Thực thi lưu toàn bộ đối tượng PurchaseRequest (bao gồm trường `aiReview: 'accepted'|'edited'|'none'`)
+    và danh mục sản phẩm vĩnh viễn vào bộ sưu tập 'procure_state' trên MongoDB Atlas Cloud Database.
+    
+    Đầu vào:
+        state_data (dict): Cây dữ liệu ProcurementState chuẩn trùng khớp với Frontend React State.
+    Đầu ra:
+        bool: True nếu replace_one thành công, False nếu kết nối thất bại.
+    """
     db = get_mongo_db()
     if db is None:
         return False
     try:
         collection = db['procure_state']
+        # Thực thi lệnh upsert thay thế tài liệu 'current_state' an toàn với MongoDB Atlas Cloud SSL
         collection.replace_one({'_id': 'current_state'}, {'_id': 'current_state', **state_data}, upsert=True)
         print("Successfully saved state to MongoDB!")
         return True
     except Exception as e:
         print(f"Failed to save state to MongoDB: {e}")
         return False
+
 
 def load_state_from_mongo():
     """Loads procurement state dictionary from MongoDB 'procure_state' collection."""
