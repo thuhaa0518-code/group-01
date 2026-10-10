@@ -19,24 +19,30 @@ def call_gemini_standardize(text):
 
     Cấu trúc JSON bắt buộc:
     {{
-      "title": "Tiêu đề yêu cầu mua sắm ngắn gọn (ví dụ: Mua Laptop cho nhóm Backend)",
-      "category": "Chọn 1 trong các danh mục chính xác: Thiết bị CNTT, In ấn & Marketing, Phần mềm & Dịch vụ, Nội thất văn phòng, Văn phòng phẩm, Thiết bị phòng họp",
+      "title": "Tiêu đề yêu cầu mua sắm ngắn gọn (ví dụ: Mua sofa tiếp khách phòng Giám đốc)",
+      "category": "Chọn CHÍNH XÁC 1 trong 6 danh mục sau tùy theo sản phẩm/dịch vụ:
+        - 'Nội thất văn phòng' (dành cho sofa, salon, bàn, ghế, tủ, kệ, đồ gỗ, rèm, thảm, vách ngăn...)
+        - 'Thiết bị CNTT' (dành cho laptop, máy tính, màn hình, chuột, bàn phím, ram, ssd, máy in, server...)
+        - 'Văn phòng phẩm' (dành cho bút, giấy, sổ, mực, kéo, kẹp, bìa, ghim...)
+        - 'Thiết bị phòng họp' (dành cho máy chiếu, loa, micro, tivi phòng họp, màn chiếu...)
+        - 'In ấn & Marketing' (dành cho in brochure, standee, poster, băng rôn, tờ rơi...)
+        - 'Phần mềm & Dịch vụ' (dành cho phần mềm, bản quyền, license, cloud, hosting, vps, bảo trì, tư vấn, dịch vụ...)",
       "justification": "Mục đích sử dụng / lý do mua sắm được viết lại chuyên nghiệp, rõ ràng",
       "items": [
         {{
-          "name": "Tên sản phẩm chuẩn",
+          "name": "Tên sản phẩm chuẩn (ví dụ: Bộ ghế sofa văn phòng tiếp khách)",
           "specs": "Thông số kỹ thuật chi tiết",
           "quantity": 1,
-          "unit": "chiếc",
+          "unit": "chiếc hoặc bộ",
           "estUnitPrice": 0
         }}
       ],
-      "requiredBy": "Định dạng YYYY-MM-DD nếu văn bản có nêu ngày/thời hạn cần hàng (ví dụ: '2026-10-20'), nếu không nêu thì để null",
-      "deliveryLocation": "Địa điểm giao hàng đầy đủ nếu văn bản có nêu (ví dụ: 'Tầng 5, Keangnam, Hà Nội'), nếu không nêu thì để null",
-      "budgetCode": "Mã ngân sách nếu văn bản có nêu (ví dụ: 'BGT-IT-2026'), nếu không nêu thì để null",
-      "costCenter": "Trung tâm chi phí nếu văn bản có nêu (ví dụ: 'CC-IT-01'), nếu không nêu thì để null",
+      "requiredBy": "Định dạng YYYY-MM-DD nếu văn bản có nêu ngày/thời hạn cần hàng (ví dụ: '2026-10-16'), nếu không nêu thì để null",
+      "deliveryLocation": "Địa điểm giao hàng đầy đủ nếu văn bản có nêu (ví dụ: 'Tầng 8 tòa nhà An Phát'), nếu không nêu thì để null",
+      "budgetCode": "Mã ngân sách nếu văn bản có nêu (ví dụ: 'BGT-OPS-2026'), nếu không nêu thì để null",
+      "costCenter": "Trung tâm chi phí nếu văn bản có nêu (ví dụ: 'CC-OPS-01'), nếu không nêu thì để null",
       "missing": [
-        "Cảnh báo các thông tin quan trọng còn thiếu (ví dụ: chưa có Ngày cần hàng, chưa có Địa điểm giao hàng...)"
+        "Cảnh báo các thông tin quan trọng còn thiếu (ví dụ: chưa có Đơn giá dự toán từng dòng...)"
       ]
     }}
 

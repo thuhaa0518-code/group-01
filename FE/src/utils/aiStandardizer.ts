@@ -124,12 +124,13 @@ function extractProductName(text: string): string {
 }
 
 function guessCategory(lower: string): string {
-  if (/(bút|giấy|sổ|văn phòng phẩm|mực|kéo|kẹp|thước)/.test(lower)) return 'Văn phòng phẩm';
-  if (/(laptop|máy tính|màn hình|chuột|bàn phím|ram|ssd|máy in)/.test(lower)) return 'Thiết bị CNTT';
-  if (/(bàn|ghế|tủ|kệ|nội thất)/.test(lower)) return 'Nội thất văn phòng';
-  if (/(máy chiếu|loa|micro|phòng họp)/.test(lower)) return 'Thiết bị phòng họp';
-  if (/(in|brochure|standee|marketing|tờ rơi)/.test(lower)) return 'In ấn & Marketing';
-  return 'Phần mềm & Dịch vụ';
+  if (/(bút|giấy|sổ|văn phòng phẩm|mực|kéo|kẹp|thước|bìa|ghim|băng dính)/.test(lower)) return 'Văn phòng phẩm';
+  if (/(laptop|máy tính|màn hình|chuột|bàn phím|ram|ssd|máy in|server|ổ cứng|pc|workstation)/.test(lower)) return 'Thiết bị CNTT';
+  if (/(bàn|ghế|tủ|kệ|nội thất|sofa|salon|giường|đồ gỗ|rèm|thảm|vách ngăn|bàn làm việc)/.test(lower)) return 'Nội thất văn phòng';
+  if (/(máy chiếu|loa|micro|phòng họp|tivi|màn chiếu|soundbar|camera họp)/.test(lower)) return 'Thiết bị phòng họp';
+  if (/(in|brochure|standee|marketing|tờ rơi|băng rôn|quảng cáo|poster|catalogue)/.test(lower)) return 'In ấn & Marketing';
+  if (/(phần mềm|dịch vụ|bảo trì|bản quyền|license|cloud|vps|hosting|domain|tư vấn|sửa chữa|đào tạo)/.test(lower)) return 'Phần mềm & Dịch vụ';
+  return 'Văn phòng phẩm';
 }
 
 function extractUnit(lower: string): string | undefined {

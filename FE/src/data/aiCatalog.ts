@@ -20,6 +20,11 @@ export const aiCatalog: AICatalogEntry[] = [
   missing: ['Kích thước và độ phân giải mong muốn', 'Cổng kết nối tương thích với máy hiện có']
 },
 {
+  keywords: ['sofa', 'ghế sofa', 'bộ sofa', 'salon', 'sofa văn phòng'], shortName: 'sofa văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ ghế sofa văn phòng tiếp khách cao cấp', unit: 'bộ',
+  specs: 'Khung gỗ tự nhiên bọc da/nỉ cao cấp, đệm mút D40 chống xẹp, bao gồm 1 ghế dài và 2 ghế đơn tiếp khách',
+  missing: ['Chất liệu bọc (Da / Nỉ / Simili)', 'Kích thước cụ thể theo diện tích phòng']
+},
+{
   keywords: ['bàn ghế', 'bàn gỗ', 'bàn làm việc'], shortName: 'bàn ghế văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ bàn ghế gỗ cao cấp', unit: 'bộ',
   specs: 'Gỗ tự nhiên/công nghiệp cao cấp, bao gồm bàn làm việc và ghế đồng bộ, thiết kế hiện đại',
   missing: ['Kích thước mặt bàn', 'Màu sắc / loại chất liệu gỗ']
