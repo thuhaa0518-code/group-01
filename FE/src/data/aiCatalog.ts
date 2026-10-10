@@ -1,3 +1,8 @@
+// ==============================================================================
+// USER STORY 03 (US-03): AI PR Standardizer Catalog Seed Data
+// Tập dữ liệu mẫu cung cấp từ khóa và cấu trúc sản phẩm chuẩn cho AI Standardizer.
+// ==============================================================================
+
 export interface AICatalogEntry {
   keywords: string[];
   shortName: string;
@@ -24,6 +29,7 @@ export const aiCatalog: AICatalogEntry[] = [
   specs: 'Khung gỗ tự nhiên bọc da/nỉ cao cấp, đệm mút D40 chống xẹp, bao gồm 1 ghế dài và 2 ghế đơn tiếp khách',
   missing: ['Chất liệu bọc (Da / Nỉ / Simili)', 'Kích thước cụ thể theo diện tích phòng']
 },
+
 {
   keywords: ['bàn ghế', 'bàn gỗ', 'bàn làm việc'], shortName: 'bàn ghế văn phòng', category: 'Nội thất văn phòng', itemName: 'Bộ bàn ghế gỗ cao cấp', unit: 'bộ',
   specs: 'Gỗ tự nhiên/công nghiệp cao cấp, bao gồm bàn làm việc và ghế đồng bộ, thiết kế hiện đại',

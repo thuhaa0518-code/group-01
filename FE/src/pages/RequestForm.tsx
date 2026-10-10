@@ -99,9 +99,11 @@ function RequestFormBody({ existing }: {existing?: PurchaseRequest;}) {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-10 lg:col-span-2">
+          {/* [US-03 AI Standardizer Panel] Render Trợ lý AI ở đầu Form tạo đề xuất */}
           <AIStandardizerPanel aiReview={f.values.aiReview} onApply={f.applySuggestion} onDismiss={f.dismissSuggestion} />
 
           <section aria-labelledby="general-title">
+
             <h2 id="general-title" className="mb-4 text-xl font-semibold text-ink-900">
               Thông tin chung
             </h2>

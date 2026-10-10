@@ -1,9 +1,26 @@
+# ==============================================================================
+# USER STORY 03 (US-03): AI PR Standardizer & Natural Language Review Service
+# Tệp này chứa logic gọi dịch vụ AI Google Gemini 2.5 Flash / 1.5 Flash để bóc tách,
+# chuẩn hóa văn bản mua sắm thô thành đối tượng JSON 9 trường dữ liệu chuẩn.
+# ==============================================================================
+
 import os
 import json
 import urllib.request
 from django.conf import settings
 
 def call_gemini_standardize(text):
+    """
+    [US-03 AI Service Core Function]
+    Hàm gọi API Google Gemini AI để chuẩn hóa văn bản yêu cầu mua sắm thô (NLP).
+    
+    Đầu vào:
+        text (str): Văn bản thô do người dùng nhập (VD: "Cần 2 bộ sofa tiếp khách phòng Giám đốc...")
+    Đầu ra:
+        dict: Kết quả JSON gồm 9 trường (title, category, justification, items, requiredBy, deliveryLocation, budgetCode, costCenter, missing)
+        None: Trả về None nếu không phát hiện API Key hoặc cả 4 mô hình Gemini đều thất bại.
+    """
+    # 1. Trích xuất GEMINI_API_KEY từ settings Django hoặc biến môi trường .env / Vercel
     api_key = (
         getattr(settings, 'GEMINI_API_KEY', '') or
         os.getenv('GEMINI_API_KEY', '') or
@@ -13,6 +30,7 @@ def call_gemini_standardize(text):
     if not api_key:
         return None
     
+    # 2. Xây dựng System Prompt ràng buộc Gemini xuất JSON chuẩn xác 1 trong 6 danh mục
     prompt = f"""
     Bạn là Trợ lý AI Chuyên viên Thu mua doanh nghiệp ProcureAI.
     Nhiệm vụ: Phân tích đoạn văn bản yêu cầu mua sắm thô của người dùng và trích xuất TOÀN BỘ các thông tin có thể có trong văn bản thành duy nhất 1 JSON hợp lệ.
@@ -54,6 +72,7 @@ def call_gemini_standardize(text):
         "generationConfig": {"responseMimeType": "application/json"}
     }
 
+    # 3. Chuỗi Fallback thử nghiệm 4 mô hình Gemini theo thứ tự ưu tiên
     models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-lite"]
     for model in models_to_try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
@@ -72,3 +91,4 @@ def call_gemini_standardize(text):
             print(f"Gemini API Error with model {model}: {e}")
             continue
     return None
+

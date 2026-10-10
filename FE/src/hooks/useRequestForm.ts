@@ -57,6 +57,14 @@ export function useRequestForm(user: User, existing?: PurchaseRequest) {
   const addItem = () => setValues((prev) => ({ ...prev, items: [...prev.items, emptyItem()] }));
   const removeItem = (id: string) => setValues((prev) => ({ ...prev, items: prev.items.filter((i) => i.id !== id) }));
 
+  /**
+   * [US-03 Auto-Fill State Action]
+   * Kích hoạt khi người dùng nhấn nút "Use this" trên AI Standardizer Panel.
+   * Tự động điền 9 trường thông tin (title, category, justification, requiredBy, deliveryLocation, budgetCode, costCenter, items)
+   * và cập nhật `aiReview = 'accepted'` (thể hiện người dùng đã chấp nhận gợi ý từ AI).
+   * 
+   * Đầu vào: s (AISuggestion) - Đối tượng gợi ý chuẩn hóa do AI/Gemini trả về.
+   */
   const applySuggestion = (s: AISuggestion) =>
     setValues((prev) => ({
       ...prev,
@@ -80,7 +88,9 @@ export function useRequestForm(user: User, existing?: PurchaseRequest) {
       aiReview: 'accepted',
     }));
 
+  /** [US-03 Dismiss Action] Kích hoạt khi người dùng nhấn "Dismiss" để từ chối gợi ý AI -> gán `aiReview = 'dismissed'` */
   const dismissSuggestion = () => setValues((prev) => ({ ...prev, aiReview: prev.aiReview === 'none' ? 'dismissed' : prev.aiReview }));
+
 
   const total = prTotal(values);
   const budget = state.budgets.find((b) => b.code === values.budgetCode);

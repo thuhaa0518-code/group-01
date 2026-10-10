@@ -102,13 +102,19 @@ export function ProcurementProvider({ children }: {children: ReactNode;}) {
     }
   }, [state]);
 
+  /**
+   * [US-03 Global Dispatcher & Synchronization]
+   * Thực thi các hành động tạo/sửa PR (như Submit PR sau khi áp dụng gợi ý AI),
+   * cập nhật React State nội bộ, lưu LocalStorage và đẩy HTTP POST `/api/v1/sync/`
+   * sang Backend để lưu đồng bộ vào MongoDB Atlas Cloud Database.
+   */
   function dispatch<A extends unknown[]>(fn: ActionFn<A>, actor: User, ...args: A): ActionResult {
     const res = fn(ref.current, actor, ...args);
     if (res.ok) {
       ref.current = res.state;
       setState(res.state);
 
-      // Post update to Django backend API
+      // Đồng bộ cây dữ liệu mới sang Django Backend API & MongoDB Atlas Cloud DB
       fetch('/api/v1/sync/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -117,6 +123,7 @@ export function ProcurementProvider({ children }: {children: ReactNode;}) {
     }
     return res;
   }
+
 
   function reset() {
     const fresh = seedState();
