@@ -97,6 +97,23 @@ python manage.py test procurement.test_us03_us04_us05.ProcurementBatch2Tests.tes
 
 ---
 
+### BƯỚC 3B (TÙY CHỌN NÂNG CAO): DEMO LIVE E2E AUTOMATION TEST US-05 TRÊN VERCEL CLOUD (~30 giây)
+
+> 💡 *Chiêu ghi điểm tuyệt đối: Bật Terminal và chạy lệnh test tự động điều khiển Trình duyệt thật trên đám mây Vercel:*
+
+```bash
+python test_e2e_us05_live.py
+```
+
+> 🎙️ *(Dương bật mic dõng dạc giới thiệu khi robot Playwright tự mở Chromium thao tác trực tiếp trên Vercel: `https://procure-ai-app-topaz.vercel.app`)*:  
+> *"Thưa Thầy/Cô, không chỉ kiểm thử tầng Backend, em đã xây dựng kịch bản **E2E Automation Testing hoàn toàn tự động** cho US-05 chạy trực tiếp trên bản Production đã deploy:
+> 1. Robot đăng nhập vai trò Manager, mở đơn hàng PR-2026-0101 (120 tr > 50 tr): Nút 'Approve' trực tiếp bị khóa cứng, robot tự bấm 'Send to Finance' kèm ý kiến chuyển duyệt.
+> 2. Robot tự động đổi vai trò sang Kế toán, mở phân hệ `/budget`, kiểm tra số dư khả dụng (188 tr > 120 tr) và thực hiện phê duyệt giải ngân thành công!
+> 3. Robot tự động rà soát cảnh báo 'Vượt Budget' của phòng ban Marketing (PR-2026-0104) và kiểm tra Audit Trail chuỗi phê duyệt 2 cấp.
+> - Toàn bộ quy trình chạy thật 100% trên trình duyệt trực quan trước mắt Hội đồng!"*
+
+---
+
 ### BƯỚC 4: KẾT LUẬN & CHUYỂN GIAO (HANDOVER CUE) (~30 giây)
 
 > 🎙️ *"Sau khi nguồn ngân sách đã được Kế toán thẩm định và cấp phép đầy đủ, đơn hàng sẽ bước vào khâu thu thập báo giá, phát hành PO và nghiệm thu nhận hàng tại kho.
