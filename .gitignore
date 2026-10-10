@@ -16,7 +16,9 @@ FE/node_modules/
 .DS_Store
 Thumbs.db
 
-# Vercel
-.vercel
+# Environment Variables
+.env
+.env.local
 
+# Vercel
 .vercel
