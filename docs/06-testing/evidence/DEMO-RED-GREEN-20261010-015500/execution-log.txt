@@ -1,0 +1,305 @@
+================================================================================
+PROCUREAI QA LIVE DEMO — CONTROLLED RED / GREEN / REGRESSION EXECUTION LOG
+Run ID: DEMO-RED-GREEN-20261010-015500
+Timestamp: 2026-10-10T01:55:00+07:00
+Target Test: procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01
+Target Logic: No Self-Approval Guard at /api/v1/sync/ (BUG-0001 / BUG-SEC-01)
+Environment: Windows 11, Python 3.13.0, Django 5.1.1, Isolated Workspace Environment (demo_env)
+================================================================================
+
+--------------------------------------------------------------------------------
+PHASE A — BASELINE VERIFICATION (LOGIC UNTOUCHED)
+--------------------------------------------------------------------------------
+[Timestamp]: 2026-10-10T01:52:40+07:00
+[Directory]: d:\LTUD\group-01 - LTUDDN
+[Command]: python manage.py test procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 -v 2
+[Exit Code]: 0
+
+--- STDOUT & STDERR ---
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, procurement, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying procurement.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01)
+TC-GOV01-002: Chặn bypass No Self-Approval ở tầng Backend API & Kiểm tra BUG-SEC-01 ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.037s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+
+--------------------------------------------------------------------------------
+PHASE B — CONTROLLED FAILURE (MUTATION IN ISOLATED DEMO WORKSPACE)
+--------------------------------------------------------------------------------
+[Timestamp]: 2026-10-10T01:53:46+07:00
+[Directory]: d:\LTUD\group-01 - LTUDDN\demo_env
+[Note]: Sửa tối thiểu trong bản sao demo_env/procurement/views.py:
+        - Trước: if new_status == 'approved' and pr.status != 'approved':
+        - Sau:   if False and new_status == 'approved' and pr.status != 'approved':
+        Giữ nguyên 100% mã nguồn test.
+[Command]: python manage.py test procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 -v 2
+[Exit Code]: 1
+
+--- STDOUT & STDERR ---
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, procurement, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying procurement.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory 'D:\LTUD\group-01 - LTUDDN\demo_env\FE\dist' in the STATICFILES_DIRS setting does not exist.
+?: (staticfiles.W004) The directory 'D:\LTUD\group-01 - LTUDDN\demo_env\FE\dist\assets' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 2 issues (0 silenced).
+test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01)
+TC-GOV01-002: Chặn bypass No Self-Approval ở tầng Backend API & Kiểm tra BUG-SEC-01 ... FAIL
+
+======================================================================
+FAIL: test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01)
+TC-GOV01-002: Chặn bypass No Self-Approval ở tầng Backend API & Kiểm tra BUG-SEC-01
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\LTUD\group-01 - LTUDDN\demo_env\procurement\test_gov01_gov02.py", line 213, in test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01
+    self.assertEqual(resp_session.status_code, 403)
+AssertionError: 200 != 403
+
+----------------------------------------------------------------------
+Ran 1 test in 0.022s
+
+FAILED (failures=1)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+
+--------------------------------------------------------------------------------
+PHASE C — RESTORE & TARGET RETEST (ISOLATED DEMO WORKSPACE)
+--------------------------------------------------------------------------------
+[Timestamp]: 2026-10-10T01:54:01+07:00
+[Directory]: d:\LTUD\group-01 - LTUDDN\demo_env
+[Action]: Khôi phục demo_env/procurement/views.py từ bản sao chuẩn views.py.good
+[Command]: python manage.py test procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 -v 2
+[Exit Code]: 0
+
+--- STDOUT & STDERR ---
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, procurement, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying procurement.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory 'D:\LTUD\group-01 - LTUDDN\demo_env\FE\dist' in the STATICFILES_DIRS setting does not exist.
+?: (staticfiles.W004) The directory 'D:\LTUD\group-01 - LTUDDN\demo_env\FE\dist\assets' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 2 issues (0 silenced).
+test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01)
+TC-GOV01-002: Chặn bypass No Self-Approval ở tầng Backend API & Kiểm tra BUG-SEC-01 ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.036s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+
+--------------------------------------------------------------------------------
+CLEANUP & ENVIRONMENT RESTORATION
+--------------------------------------------------------------------------------
+[Timestamp]: 2026-10-10T01:54:09+07:00
+[Command]: Remove-Item -Path "demo_env" -Recurse -Force
+[Exit Code]: 0
+[Result]: Xóa hoàn toàn thư mục demo_env. Workspace chính sạch sẽ, không lưu rác.
+
+
+--------------------------------------------------------------------------------
+PHASE D — FULL REGRESSION TEST SUITE (MAIN WORKSPACE)
+--------------------------------------------------------------------------------
+[Timestamp]: 2026-10-10T01:54:14+07:00
+[Directory]: d:\LTUD\group-01 - LTUDDN
+[Command]: python manage.py test -v 2
+[Exit Code]: 0
+
+--- STDOUT & STDERR (TRUNCATED HEADER, FULL TEST LIST) ---
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 53 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, procurement, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying procurement.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+test_tc_gov01_001_prevent_self_approval_workflow (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_001_prevent_self_approval_workflow) ... ok
+test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01 (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_002_prevent_bypass_and_verify_bug_sec_01) ... ok
+test_tc_gov01_003_rbac_matrix_5_roles (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov01_003_rbac_matrix_5_roles) ... ok
+test_tc_gov02_001_audit_entry_on_status_change (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov02_001_audit_entry_on_status_change) ... ok
+test_tc_gov02_002_audit_trail_immutable (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov02_002_audit_trail_immutable) ... ok
+test_tc_gov02_003_audit_trail_complete_lifecycle (procurement.test_gov01_gov02.Gov01Gov02AutomatedTests.test_tc_gov02_003_audit_trail_complete_lifecycle) ... ok
+test_tc_us01_001_mandatory_fields_validation (procurement.test_us01_us02.ProcurementBatch1Tests.test_tc_us01_001_mandatory_fields_validation) ... ok
+test_tc_us01_002_boundary_quantity_positive (procurement.test_us01_us02.ProcurementBatch1Tests.test_tc_us01_002_boundary_quantity_positive) ... ok
+test_tc_us01_003_department_selection (procurement.test_us01_us02.ProcurementBatch1Tests.test_tc_us01_003_department_selection) ... ok
+test_tc_us02_001_status_transitions_valid (procurement.test_us01_us02.ProcurementBatch1Tests.test_tc_us02_001_status_transitions_valid) ... ok
+test_tc_us02_002_prevent_invalid_transition (procurement.test_us01_us02.ProcurementBatch1Tests.test_tc_us02_002_prevent_invalid_transition) ... ok
+test_tc_us02_003_timeline_history_ordering (procurement.test_us01_us02.ProcurementBatch1Tests.test_tc_us02_003_timeline_history_ordering) ... ok
+test_tc_us03_001_ai_extraction_accuracy (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us03_001_ai_extraction_accuracy) ... ok
+test_tc_us03_002_ai_output_review_and_manual_override (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us03_002_ai_output_review_and_manual_override) ... ok
+test_tc_us03_003_ai_service_fallback (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us03_003_ai_service_fallback) ... ok
+test_tc_us04_001_manager_approval_updates_status (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_001_manager_approval_updates_status) ... ok
+test_tc_us04_002_manager_rejection_requires_comment (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_002_manager_rejection_requires_comment) ... ok
+test_tc_us04_003_manager_view_budget_impact_realtime (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us04_003_manager_view_budget_impact_realtime) ... ok
+test_tc_us05_001_finance_verification_and_approval (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us05_001_finance_verification_and_approval) ... ok
+test_tc_us05_002_budget_threshold_50m_boundary_test (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us05_002_budget_threshold_50m_boundary_test) ... ok
+test_tc_us05_003_exceeded_budget_detection_and_alert (procurement.test_us03_us04_us05.ProcurementBatch2Tests.test_tc_us05_003_exceeded_budget_detection_and_alert) ... ok
+test_tc_us06_001_multi_quotation_linking (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us06_001_multi_quotation_linking) ... ok
+test_tc_us06_002_reject_quotation_before_approval (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us06_002_reject_quotation_before_approval) ... ok
+test_tc_us06_003_quotation_financial_calculation (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us06_003_quotation_financial_calculation) ... ok
+test_tc_us07_001_price_anomaly_alert_triggered (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us07_001_price_anomaly_alert_triggered) ... ok
+test_tc_us07_002_price_anomaly_boundary_values (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us07_002_price_anomaly_boundary_values) ... ok
+test_tc_us07_003_ai_supplier_recommendation_criteria (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us07_003_ai_supplier_recommendation_criteria) ... ok
+test_tc_us07_004_human_in_the_loop_supplier_selection_override (procurement.test_us06_us07.ProcurementBatch3Tests.test_tc_us07_004_human_in_the_loop_supplier_selection_override) ... ok
+test_tc_us08_001_create_valid_po_from_selected_quotation (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us08_001_create_valid_po_from_selected_quotation) ... ok
+test_tc_us08_002_reject_po_creation_without_selected_supplier (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us08_002_reject_po_creation_without_selected_supplier) ... ok
+test_tc_us08_003_po_immutability_and_data_integrity (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us08_003_po_immutability_and_data_integrity) ... ok
+test_tc_us09_001_record_full_receiving (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us09_001_record_full_receiving) ... ok
+test_tc_us09_002_record_partial_receiving (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us09_002_record_partial_receiving) ... ok
+test_tc_us09_003_reject_over_receiving_boundary (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us09_003_reject_over_receiving_boundary) ... ok
+test_tc_us10_001_close_pr_success (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us10_001_close_pr_success) ... ok
+test_tc_us10_002_reject_closing_pr_before_receiving (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us10_002_reject_closing_pr_before_receiving) ... ok
+test_tc_us10_003_budget_finalization_on_close_pr (procurement.test_us08_us09_us10.ProcurementBatch4Tests.test_tc_us10_003_budget_finalization_on_close_pr) ... ok
+test_ai_standardizer_service (procurement.tests.ProcurementUnitModelTests.test_ai_standardizer_service) ... ok
+test_audit_entry_logging (procurement.tests.ProcurementUnitModelTests.test_audit_entry_logging) ... ok
+test_budget_remaining_calculation (procurement.tests.ProcurementUnitModelTests.test_budget_remaining_calculation) ... ok
+test_pr_creation_and_estimated_amount (procurement.tests.ProcurementUnitModelTests.test_pr_creation_and_estimated_amount) ... ok
+test_purchase_order_and_receiving (procurement.tests.ProcurementUnitModelTests.test_purchase_order_and_receiving) ... ok
+test_quotation_calculations (procurement.tests.ProcurementUnitModelTests.test_quotation_calculations) ... ok
+test_user_roles_and_properties (procurement.tests.ProcurementUnitModelTests.test_user_roles_and_properties) ... ok
+test_step_01_create_draft_pr_and_ai_standardizer (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_01_create_draft_pr_and_ai_standardizer) ... ok
+test_step_02_submit_pr_and_budget_commitment (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_02_submit_pr_and_budget_commitment) ... ok
+test_step_03_strict_no_self_approval_guard (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_03_strict_no_self_approval_guard) ... ok
+test_step_04_manager_approval_success (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_04_manager_approval_success) ... ok
+test_step_05_quotation_collection_and_price_anomaly_alert (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_05_quotation_collection_and_price_anomaly_alert) ... ok
+test_step_06_create_po_from_selected_quotation (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_06_create_po_from_selected_quotation) ... ok
+test_step_07_goods_receiving_full (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_07_goods_receiving_full) ... ok
+test_step_08_close_pr_lifecycle (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_08_close_pr_lifecycle) ... ok
+test_step_09_api_state_and_sync_endpoints (procurement.tests_workflow.ProcurementWorkflowIntegrationTests.test_step_09_api_state_and_sync_endpoints) ... ok
+
+----------------------------------------------------------------------
+Ran 53 tests in 0.299s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+
+--------------------------------------------------------------------------------
+MAIN WORKSPACE INTEGRITY VERIFICATION
+--------------------------------------------------------------------------------
+[Timestamp]: 2026-10-10T01:54:22+07:00
+[Command]: git status --short
+[Exit Code]: 0
+[Output]:
+ M docs/02-vault/AI_USAGE_LOG.md
+ M docs/06-testing/README.md
+ M docs/06-testing/evidence/RUN-20261010-004600/execution-summary.md
+ M docs/06-testing/evidence/RUN-20261010-004600/manual-smoke-checklist.md
+ M docs/06-testing/final-test-report.md
+ M docs/06-testing/release-readiness.md
+?? docs/06-testing/evidence/RUN-20261010-011000/
+?? docs/08-presentation/
+
+[Verdict]: Mã nguồn ứng dụng (procurement/, config/, manage.py) hoàn toàn nguyên vẹn 100%. Không có mutation nào bị rò rỉ vào workspace chính.
+================================================================================

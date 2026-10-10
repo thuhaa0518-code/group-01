@@ -1,12 +1,14 @@
 # Báo Cáo Kiểm Thử Cuối Cùng (Final Test Report) — ProcureAI
 
-> **Hệ thống:** ProcureAI — Internal Procurement & Approval Platform  
-> **Mã tài liệu:** QA-11-FTR (Cập nhật sau QA-12 Smoke Test)  
-> **Phiên bản:** v1.2.0  
-> **Thời điểm lập báo cáo:** 2026-10-10T00:50:00+07:00  
-> **Người thực hiện:** Senior QA Lead (Trần Thị Thu Hà)  
+> **Hệ thống:** ProcureAI — Internal Procurement & Approval Platform<br/>
+> **Mã tài liệu:** QA-11-FTR (Hiệu chỉnh theo thẩm định độc lập QA-12A)<br/>
+> **Phiên bản:** v1.3.0<br/>
+> **Thời điểm lập báo cáo:** 2026-10-10T01:15:00+07:00<br/>
+> **Người thực hiện:** Senior QA Lead (Trần Thị Thu Hà)<br/>
 > **Phân loại Kết luận Độc lập theo 3 Mục tiêu:**
-> - **1. Chạy Demo Cục bộ (Local Demo):** **`LOCAL DEMO VERIFIED WITH LIMITATIONS`** (Đã xác minh bằng runtime HTTP & Manual Checklist tại RUN-20261010-004600)
+> - **1. Chạy Demo Cục bộ (Local Demo):**
+>   - **Tầng Dịch vụ & API Backend:** **`LOCAL SERVICE SMOKE PASS`** (Xác minh tại RUN-20261010-004600 & RUN-20261010-011000)
+>   - **Tầng Trình diễn Giao diện (UI Interaction):** **`LOCAL DEMO NOT VERIFIED`** (Chưa có tương tác trình duyệt thực tế; asset script chính bị 404)
 > - **2. Triển khai Staging / UAT:** **`NOT VERIFIED`** (Chưa có môi trường và cấu hình Staging)
 > - **3. Phát hành Production:** **`BLOCKED / NOT READY`** (Chặn do lỗi Lint, Typecheck và thiếu cấu hình Prod)
 
@@ -14,8 +16,8 @@
 
 ## 1. Mục Tiêu & Phạm Vi Báo Cáo
 
-Báo cáo này đóng vai trò là tài liệu chốt kiểm thử độc lập cuối cùng của chu trình QA (từ QA-01 đến QA-12), đối chiếu chéo toàn diện giữa:
-- Nhật ký thực thi bằng chứng kiểm thử tại [`docs/06-testing/evidence/RUN-20261010-000500/`](evidence/RUN-20261010-000500/) và đợt smoke test [`docs/06-testing/evidence/RUN-20261010-004600/`](evidence/RUN-20261010-004600/).
+Báo cáo này đóng vai trò là tài liệu chốt kiểm thử độc lập cuối cùng của chu trình QA (từ QA-01 đến QA-12A), đối chiếu chéo toàn diện giữa:
+- Nhật ký thực thi bằng chứng kiểm thử tại [`docs/06-testing/evidence/RUN-20261010-000500/`](evidence/RUN-20261010-000500/), [`RUN-20261010-004600/`](evidence/RUN-20261010-004600/), và đợt thẩm định [`RUN-20261010-011000/`](evidence/RUN-20261010-011000/).
 - Sổ theo dõi khiếm khuyết [`docs/06-testing/04-defects/BUG_TRACKER.md`](04-defects/BUG_TRACKER.md).
 - Báo cáo phân loại lỗi [`docs/06-testing/04-defects/bug-triage-report.md`](04-defects/bug-triage-report.md).
 - Ma trận truy vết yêu cầu [`docs/06-testing/01-plans/requirement-traceability-matrix.md`](01-plans/requirement-traceability-matrix.md).
@@ -98,14 +100,12 @@ Dữ liệu dưới đây được đối chiếu nghiêm ngặt 1:1 với nhậ
 ## 7. Kết Luận Phát Hành Theo Từng Mục Tiêu Độc Lập
 
 ### 1. Mục tiêu Local Demo (Chạy thử nghiệm máy cục bộ)
-👉 **`LOCAL DEMO VERIFIED WITH LIMITATIONS`**
-- *Căn cứ thực tế (QA-12 / RUN-20261010-004600):*
-  - Khởi chạy thành công Django dev server tại `http://127.0.0.1:8000/`.
-  - 6/6 HTTP / API runtime checks PASS (Root HTML tải được, Static bundle JS 591KB/CSS 29KB tải được, API State nạp đủ 5 tài khoản demo, No Self-Approval trả về 403 Forbidden, đồng bộ state thành công).
-  - Đã xây dựng bảng kiểm thử khói thủ công ([`manual-smoke-checklist.md`](evidence/RUN-20261010-004600/manual-smoke-checklist.md)) bao phủ trọn vẹn 6 luồng thao tác demo (Đăng nhập, Tạo PR, No Self-Approval, Trưởng phòng duyệt, Mua sắm/AI báo giá, PO & Nhận hàng).
-- *Giới hạn chấp nhận:*
-  - Công cụ automated browser subagent (Playwright) bị chặn tải driver từ CDN mạng ngoài (404), giao diện được kiểm chứng qua checklist thao tác thủ công.
-  - Bỏ qua lỗi ESLint (`BUG-0002`, `BUG-0003`) và TypeScript typecheck (`BUG-0004`) trong quá trình demo cục bộ.
+- **Tầng Dịch Vụ & API Backend:** 👉 **`LOCAL SERVICE SMOKE PASS`**
+  - *Căn cứ thực tế (QA-12 & QA-12A):* Django server khởi chạy thành công; `GET /api/v1/state/` phản hồi HTTP 200 đầy đủ dữ liệu; `POST /api/v1/sync/` chặn đứng No Self-Approval với HTTP 403 Forbidden (`SELF_APPROVAL_FORBIDDEN`); mount element `<div id="root"></div>` tồn tại trong HTML root.
+- **Tầng Giao Diện Người Dùng & Trình Diễn Toàn Trình:** 👉 **`LOCAL DEMO NOT VERIFIED`**
+  - *Căn cứ thực tế (QA-12A / RUN-20261010-011000):*
+    - Chưa có bằng chứng thao tác trình duyệt thực tế do Playwright bị chặn driver; các kịch bản `MC-01` đến `MC-06` được hiệu chỉnh chính xác thành `NOT RUN` / `NOT VERIFIED`.
+    - Tệp `FE/dist/index.html` hiện tại tham chiếu script `/assets/index-eMT3_iPN.js` bị trả về **HTTP 404 Not Found** (thiếu file bundle JS sau đợt merge), có nguy cơ gây lỗi trắng trang nếu mở trên trình duyệt thật. Cần chạy lại `npm run build` trước khi demo.
 
 ### 2. Mục tiêu Staging / UAT Deployment
 👉 **`NOT VERIFIED`**

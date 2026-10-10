@@ -1,12 +1,14 @@
 # Đánh Giá Mức Độ Sẵn Sàng Phát Hành (Release Readiness Review) — ProcureAI
 
-> **Hệ thống:** ProcureAI — Internal Procurement & Approval Platform  
-> **Mã tài liệu:** QA-11-RRR (Cập nhật sau QA-12 Smoke Test)  
-> **Phiên bản đề xuất:** v1.2.0  
-> **Thời điểm lập:** 2026-10-10T00:50:00+07:00  
-> **Chủ trì thẩm định:** Senior QA Lead (Trần Thị Thu Hà)  
+> **Hệ thống:** ProcureAI — Internal Procurement & Approval Platform<br/>
+> **Mã tài liệu:** QA-11-RRR (Hiệu chỉnh theo thẩm định độc lập QA-12A)<br/>
+> **Phiên bản đề xuất:** v1.3.0<br/>
+> **Thời điểm lập:** 2026-10-10T01:15:00+07:00<br/>
+> **Chủ trì thẩm định:** Senior QA Lead (Trần Thị Thu Hà)<br/>
 > **Trạng thái Release Gates theo 3 Mục tiêu:**
-> - **1. Chạy Demo Cục bộ (Local Demo):** **`LOCAL DEMO VERIFIED WITH LIMITATIONS`** (Đã xác minh thực tế qua RUN-20261010-004600)
+> - **1. Chạy Demo Cục bộ (Local Demo):**
+>   - **Tầng Dịch vụ & REST API:** **`LOCAL SERVICE SMOKE PASS`**
+>   - **Tầng Giao diện Người dùng (UI):** **`LOCAL DEMO NOT VERIFIED`** (Chưa có tương tác trình duyệt thực tế; asset script chính bị 404)
 > - **2. Triển khai Staging / UAT:** **`NOT VERIFIED`** (Chưa có hạ tầng/cấu hình staging)
 > - **3. Phát hành Production:** **`BLOCKED / NOT READY`** (Chặn do lỗi Linter, Typecheck và thiếu bảo mật prod)
 
@@ -80,10 +82,12 @@ Những hạng mục dưới đây bắt buộc phải thực hiện ngay sau kh
 ## 6. Quyết Định Phát Hành Theo 3 Mục Tiêu Độc Lập (Final Verdict)
 
 ### 1️⃣ Mục tiêu Chạy Demo Cục bộ (Local Demo)
-👉 **`LOCAL DEMO VERIFIED WITH LIMITATIONS`**
-- *Quyết định:* Được phép khởi chạy server backend và giao diện người dùng trên máy cục bộ `127.0.0.1:8000` phục vụ demo nội bộ và báo cáo môn học.
-- *Căn cứ thực tế:* Bằng chứng [`RUN-20261010-004600`](evidence/RUN-20261010-004600/execution-summary.md) xác nhận máy chủ phản hồi đúng 6/6 HTTP contracts, phục vụ bundle SPA đầy đủ và cung cấp bảng kiểm thử khói thủ công cho 6 kịch bản demo chính.
-- *Giới hạn chấp nhận:* Do driver tự động Playwright bị chặn bởi CDN ngoài, việc kiểm thử UI được thực hiện bằng checklist thủ công. Tồn tại 2 lỗi ESLint và 69 lỗi TypeScript compiler được cô lập trong mã nguồn FE nhưng không cản trở runtime demo.
+- **Tầng Dịch Vụ & API Backend:** 👉 **`LOCAL SERVICE SMOKE PASS`**
+  - *Quyết định:* Máy chủ Django cục bộ chạy tại `http://127.0.0.1:8000/` đáp ứng chuẩn các API phục vụ dữ liệu và kiểm tra quyền hạn (No Self-Approval chặn đúng HTTP 403 Forbidden).
+- **Tầng Trình Diễn Giao Diện (UI Interaction):** 👉 **`LOCAL DEMO NOT VERIFIED`**
+  - *Quyết định:* Chưa đủ điều kiện nghiệm thu khả năng demo giao diện cục bộ do:
+    1. Chưa có bằng chứng thực thi tương tác trình duyệt thực tế (công cụ tự động Playwright bị chặn driver; checklist thủ công chưa được người vận hành chạy trên giao diện thực).
+    2. Tệp `index.html` đang tham chiếu script bundle `/assets/index-eMT3_iPN.js` bị trả về **HTTP 404 Not Found** (thiếu asset sau khi đồng bộ mã nguồn git). Cần thực thi `npm run build` trước khi demo.
 
 ### 2️⃣ Mục tiêu Triển khai Staging / UAT (Staging Deployment)
 👉 **`NOT VERIFIED`**

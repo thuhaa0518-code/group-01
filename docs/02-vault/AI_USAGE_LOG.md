@@ -689,3 +689,98 @@ pm run build PASS (biên dịch module Vite thành công) với xác nhận ch�
 8. **Bug được phát hiện hoặc cập nhật:** Không phát sinh bug mới; giữ nguyên `BUG-0001` ở `VERIFIED`, 4 bug còn lại (`BUG-0002` .. `BUG-0005`) ở `TRIAGED` (OPEN).
 9. **Quyết định của người dùng đã được áp dụng:** Áp dụng nguyên tắc QA-12: kiểm chứng bằng thực thi thực tế, không dựa riêng vào unit tests hay build; không kết nối production; không lộ secret; trung thực về việc automated UI tool bị BLOCKED và thay bằng manual checklist có bằng chứng; kết luận chuẩn xác `LOCAL DEMO VERIFIED WITH LIMITATIONS`; không commit, push hay deploy.
 10. **Các giới hạn, việc chưa thực hiện và bước đang chờ phê duyệt:** Kết luận `LOCAL DEMO VERIFIED WITH LIMITATIONS`; Staging và Production giữ nguyên `NOT VERIFIED` và `BLOCKED / NOT READY`; dừng lại chờ Người dùng / Giảng viên xem xét kết quả.
+
+
+### AI-QA-12A - Local Smoke Evidence Validation (QA-12A)
+1. **Ngày/giờ thực hiện:** 2026-10-10T01:25:00+07:00.
+2. **Prompt ID và mục tiêu:** `QA-12A — LOCAL SMOKE EVIDENCE VALIDATION`. Thẩm định độc lập bằng chứng RUN-20261010-004600, đối chiếu header Content-Type thực tế, kiểm tra tính toàn vẹn asset và kiểm tra dữ liệu persistent trong SQLite `db.sqlite3`, hiệu chỉnh các kết luận chưa có bằng chứng browser interaction thực tế.
+3. **Phạm vi công việc đã làm:**
+   - Kiểm tra endpoint `GET /`: Trả về HTTP 200, Content-Type `text/html; charset=utf-8`, mount element `<div id="root"></div>` tồn tại chính xác.
+   - Kiểm tra các tài nguyên JS và CSS được tham chiếu bởi `FE/dist/index.html`: Phát hiện script `/assets/index-eMT3_iPN.js` bị **HTTP 404 Not Found** (do commit merge từ remote tham chiếu file JS mới nhưng chưa commit file bundle vào `FE/dist/assets/`); CSS `/assets/index-DsrVCL7c.css` trả về HTTP 200 OK (Content-Type `text/css`, 29,751 bytes).
+   - Kiểm tra các asset JS/CSS có sẵn trên đĩa: `/assets/index-B64izx3U.js` trả về HTTP 200 OK (Content-Type `application/javascript`, 591,605 bytes).
+   - Kiểm tra API `GET /api/v1/state/`: Trả về HTTP 200 OK, Content-Type `application/json`, nạp đủ 5 users, 5 PRs, 4 budgets.
+   - Kiểm tra dữ liệu persistent trong SQLite `db.sqlite3`: Xác nhận bảng `procurement_purchaserequest` có đúng 5 PRs gốc, không có bản ghi rác hay test artifact nào tồn đọng, dữ liệu demo hoàn toàn sạch và an toàn.
+   - Thẩm định lại Manual Smoke Checklist MC-01..MC-06: Xác định việc gán PASS trước đó chỉ dựa vào Python urllib API request là không hợp lệ; hiệu chỉnh MC-01 thành `NOT VERIFIED` (do asset JS bị 404), MC-02..MC-06 thành `NOT RUN` (do chưa có tương tác trình duyệt thực tế).
+   - Tạo Run ID mới `RUN-20261010-011000` lưu trữ đầy đủ evidence mới mà không ghi đè log cũ.
+   - Hiệu chỉnh các tài liệu: `docs/06-testing/evidence/RUN-20261010-004600/`, `docs/06-testing/final-test-report.md`, `docs/06-testing/release-readiness.md`, `docs/06-testing/README.md`.
+4. **Các file đã đọc, tạo hoặc sửa:**
+   - *Đã đọc:* `docs/06-testing/evidence/RUN-20261010-004600/execution-log.txt`, `FE/dist/index.html`, `config/urls.py`, `config/settings.py`.
+   - *Đã tạo:*
+     - `docs/06-testing/evidence/RUN-20261010-011000/environment-summary.md`
+     - `docs/06-testing/evidence/RUN-20261010-011000/execution-log.txt`
+     - `docs/06-testing/evidence/RUN-20261010-011000/execution-summary.md`
+     - `docs/06-testing/evidence/RUN-20261010-011000/manual-smoke-checklist.md`
+     - File script thẩm định: `scratch/validate_qa12a.py`
+   - *Đã sửa:*
+     - `docs/06-testing/evidence/RUN-20261010-004600/execution-summary.md`
+     - `docs/06-testing/evidence/RUN-20261010-004600/manual-smoke-checklist.md`
+     - `docs/06-testing/final-test-report.md`
+     - `docs/06-testing/release-readiness.md`
+     - `docs/06-testing/README.md`
+     - `docs/02-vault/AI_USAGE_LOG.md`
+5. **Các lệnh test, lint, typecheck, build hoặc audit đã thực sự chạy:**
+   - `python validate_qa12a.py` (Script kiểm tra trực tiếp HTTP, Content-Type, assets và SQLite DB)
+   - `python manage.py test -v 1` (53 tests PASS, 0.275s)
+6. **Kết quả thực tế, exit code và số test:**
+   - Backend REST API: Phản hồi chuẩn xác HTTP 200/403.
+   - Tệp tĩnh JS tham chiếu: HTTP 404 Not Found (Cần chạy lại `npm run build` để tái đồng bộ bundle).
+   - Cơ sở dữ liệu: Hoàn toàn sạch, 5 PRs, 0 test artifact.
+   - Kịch bản UI Checklist: 1 NOT VERIFIED, 5 NOT RUN.
+7. **Evidence path và Run ID liên quan:** `docs/06-testing/evidence/RUN-20261010-011000/`.
+8. **Bug được phát hiện hoặc cập nhật:** Phát hiện vấn đề thiếu asset bundle JS (`index-eMT3_iPN.js`) trong `FE/dist/index.html` sau khi merge nhánh remote; giữ nguyên các bug cũ không tự ý đóng.
+9. **Quyết định của người dùng đã được áp dụng:** Áp dụng nguyên tắc QA-12A: chỉ xác nhận những gì thực sự được kiểm tra, không coi API request là bằng chứng thao tác UI, tạo Run ID mới không ghi đè log cũ, không sửa code ứng dụng, không commit/push/deploy.
+10. **Các giới hạn, việc chưa thực hiện và bước đang chờ phê duyệt:** Kết luận tầng Dịch vụ là `LOCAL SERVICE SMOKE PASS`; kết luận giao diện người dùng cục bộ là `LOCAL DEMO NOT VERIFIED`; cần nhóm Frontend chạy `npm run build` và thực hiện tương tác UI thật sự trên trình duyệt trước khi demo.
+
+
+### PRESENTATION-01 - Project Presentation Package (PRESENTATION-01)
+1. **Ngày/giờ thực hiện:** 2026-10-10T01:40:00+07:00.
+2. **Prompt ID và mục tiêu:** `PRESENTATION-01 — PROJECT PRESENTATION PACKAGE`. Đóng vai trò Technical Presentation Specialist và Business Analyst, tổng hợp tình trạng thực tế của dự án ProcureAI, xây dựng bộ tài liệu thuyết trình đầy đủ trước giảng viên và hội đồng phản biện.
+3. **Phạm vi công việc đã làm:**
+   - Nghiên cứu và đối chiếu chéo toàn diện các nguồn tài liệu: `README.md`, `requirements.md`, `user-stories.md`, `final-test-report.md`, `release-readiness.md`, `BUG_TRACKER.md`, RTM và evidence các đợt chạy `RUN-20261010-000500`, `RUN-20261010-004600`, `RUN-20261010-011000`.
+   - Thiết lập cấu trúc bộ slide thuyết trình 8 slide trọng tâm tại `docs/08-presentation/presentation-outline.md`.
+   - Biên soạn kịch bản lời thoại tự nhiên, mạch lạc bằng tiếng Việt tại `docs/08-presentation/speaker-notes.md`.
+   - Soạn thảo kịch bản demo trực tiếp chi tiết 6 kịch bản kèm dữ liệu mẫu và phương án dự phòng xử lý sự cố runtime tại `docs/08-presentation/demo-script.md`.
+   - Thiết lập bộ câu hỏi phản biện chuyên sâu và câu trả lời có căn cứ kỹ thuật/evidence tại `docs/08-presentation/likely-questions-and-answers.md`.
+   - Tổng hợp báo cáo tóm tắt 1 trang về tình trạng chức năng, kiểm thử, bug và triển khai tại `docs/08-presentation/project-status-summary.md`.
+   - Xác nhận môi trường chưa cài đặt thư viện `python-pptx`, ghi nhận rõ ràng và hoàn thiện toàn bộ các file Markdown chuẩn chỉnh.
+4. **Các file đã đọc, tạo hoặc sửa:**
+   - *Đã đọc:* `README.md`, `docs/01-discovery/requirements.md`, `docs/03-product/user-stories.md`, `docs/06-testing/final-test-report.md`, `docs/06-testing/release-readiness.md`, `docs/06-testing/04-defects/BUG_TRACKER.md`, `docs/06-testing/evidence/RUN-20261010-011000/execution-summary.md`.
+   - *Đã tạo:*
+     - `docs/08-presentation/presentation-outline.md`
+     - `docs/08-presentation/speaker-notes.md`
+     - `docs/08-presentation/demo-script.md`
+     - `docs/08-presentation/likely-questions-and-answers.md`
+     - `docs/08-presentation/project-status-summary.md`
+   - *Đã sửa:*
+     - `docs/02-vault/AI_USAGE_LOG.md`
+5. **Các lệnh test, lint, typecheck, build hoặc audit đã thực sự chạy:**
+   - `python -c "import pptx"` (Kiểm tra công cụ tạo PowerPoint, ghi nhận ModuleNotFoundError)
+6. **Kết quả thực tế, exit code và số test:**
+   - Bộ tài liệu thuyết trình: 5 file Markdown hoàn thiện đầy đủ.
+7. **Evidence path và Run ID liên quan:** `docs/08-presentation/`, đối chiếu chéo `RUN-20261010-000500`, `RUN-20261010-004600`, `RUN-20261010-011000`.
+8. **Bug được phát hiện hoặc cập nhật:** Ghi nhận đầy đủ 4 bug còn mở (`BUG-0002` đến `BUG-0005`) và phương án xử lý trong tài liệu thuyết trình.
+9. **Quyết định của người dùng đã được áp dụng:** Áp dụng nguyên tắc PRESENTATION-01: sử dụng tiếng Việt tự nhiên, trung thực với số liệu kiểm thử thực tế, không bịa đặt ảnh giao diện hay số liệu, phân định rạch ròi giữa tính năng đã test và chưa test, không sửa code, không commit/push/deploy.
+10. **Các giới hạn, việc chưa thực hiện và bước đang chờ phê duyệt:** Chưa tạo file `.pptx` do thiếu thư viện `python-pptx` trong môi trường máy trạm; cần nhóm Frontend chạy `npm run build` trước khi thực hiện live demo theo kịch bản; dừng lại chờ người dùng review.
+
+### PRESENTATION-01A - Chuyển Đổi Kịch Bản Thuyết Trình Trực Tiếp Trên Hệ Thống Thật (Không Dùng Slide)
+1. **Ngày/giờ thực hiện:** 2026-10-10T01:50:00+07:00.
+2. **Prompt ID và mục tiêu:** `PRESENTATION-01A — SLIDE-FREE LIVE SYSTEM WALKTHROUGH`. Tiếp thu yêu cầu "không hề có slide nhé", chuyển đổi 100% toàn bộ gói tài liệu thuyết trình từ cấu trúc slide lý thuyết sang hình thức **Trình diễn trực tiếp trên hệ thống phần mềm thật (`http://127.0.0.1:8000/`), mã nguồn (VS Code), và Terminal Console kiểm thử**.
+3. **Phạm vi công việc đã làm:**
+   - Loại bỏ toàn bộ các khái niệm "Slide", "chuyển slide" trong toàn bộ tài liệu `docs/08-presentation/`.
+   - Tái cấu trúc `presentation-outline.md` thành Đề cương 5 Chặng trình diễn trực tiếp theo luồng tương tác thực tế của 5 thành viên.
+   - Cập nhật `speaker-notes.md` thành Bảng điều phối màn hình (Screen Allocation), phân bổ thời gian và câu thoại chuyển giao (Handover Cues) cho từng thành viên.
+   - Cập nhật `individual-presentation-scripts.md` với kịch bản lời thoại đồng bộ 1-1 với thao tác bấm chuột trực tiếp trên giao diện web, chỉ vào mã nguồn trong VS Code, gửi request tấn công bảo mật trong Terminal và chạy bộ kiểm thử `python manage.py test -v 2` tại chỗ.
+4. **Các file đã đọc, tạo hoặc sửa:**
+   - *Đã sửa:*
+     - `docs/08-presentation/presentation-outline.md`
+     - `docs/08-presentation/speaker-notes.md`
+     - `docs/08-presentation/individual-presentation-scripts.md`
+     - `docs/02-vault/AI_USAGE_LOG.md`
+5. **Các lệnh test, lint, typecheck, build hoặc audit đã thực sự chạy:**
+   - Kiểm tra chuỗi 'slide' trên toàn bộ thư mục `docs/08-presentation/` để đảm bảo không còn tàn dư khái niệm slide.
+6. **Kết quả thực tế, exit code và số test:**
+   - Toàn bộ gói 6 tài liệu trong `docs/08-presentation/` đồng bộ 100% với phương thức bảo vệ bằng Live Demo trên hệ thống.
+7. **Evidence path và Run ID liên quan:** `docs/08-presentation/`, `docs/06-testing/evidence/RUN-20261010-000500`, `RUN-20261010-011000`.
+8. **Bug được phát hiện hoặc cập nhật:** Giữ nguyên trạng thái bug tracker, không sửa code.
+9. **Quyết định của người dùng đã được áp dụng:** Định dạng thuyết trình không dùng slide; từng cá nhân tự thuyết minh và trực tiếp thao tác trên phân hệ/US mình sở hữu; kết hợp chạy lệnh kiểm thử và thử nghiệm tấn công bảo mật trực tiếp trước Hội đồng.
+10. **Các giới hạn, việc chưa thực hiện và bước đang chờ phê duyệt:** Chờ nhóm thực hành tập dượt theo kịch bản mới trước buổi bảo vệ chính thức.

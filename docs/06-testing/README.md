@@ -40,7 +40,8 @@ docs/06-testing/
 │   └── bug-triage-report.md       (Báo cáo sàng lọc lỗi, RCA, kế hoạch sửa & 1 Release Blocker)
 │
 ├── evidence/                      <-- BẰNG CHỨNG THỰC THI KIỂM THỬ THEO RUN ID
-│   ├── RUN-20261010-004600/       (QA-12 Local Demo Smoke Test & Manual Checklist — VERIFIED WITH LIMITATIONS)
+│   ├── RUN-20261010-011000/       (QA-12A Thẩm Định Độc Lập — Local Service PASS / UI Interaction NOT VERIFIED)
+│   ├── RUN-20261010-004600/       (QA-12 Local Demo Smoke Test Runtime Contracts & Manual Checklist)
 │   ├── RUN-20261010-000500/       (QA-10 Retest BUG-0001 & Regression Verification — 53 Tests PASS)
 │   ├── RUN-20261009-220000/       (QA-07 Master Full Suite Execution — 53 Tests PASS)
 │   ├── RUN-20261009-215300/       (Batch 5: GOV-01, GOV-02 — 5 TCs PASS)
@@ -81,7 +82,8 @@ docs/06-testing/
 - [**Báo cáo Phân loại & Sàng lọc Lỗi (`bug-triage-report.md`)**](04-defects/bug-triage-report.md): Đánh giá Release Blocker (`BUG-0001`), phân tích RCA và kế hoạch giải quyết.
 
 ### 📌 Phân hệ 05: Bằng Chứng Thực Thi (`evidence/`)
-- [**Bằng chứng Smoke Test Local Demo QA-12 (`evidence/RUN-20261010-004600/`)**](evidence/RUN-20261010-004600/execution-summary.md): Xác minh khởi chạy máy chủ cục bộ 127.0.0.1:8000, 6 HTTP contracts PASS, bảng kiểm thử thủ công UI 6 kịch bản.
+- [**Bằng chứng Thẩm định Độc lập QA-12A (`evidence/RUN-20261010-011000/`)**](evidence/RUN-20261010-011000/execution-summary.md): Thẩm định live server HTTP, phát hiện asset script 404, hiệu chỉnh manual checklist MC-01..MC-06 sang NOT RUN / NOT VERIFIED.
+- [**Bằng chứng Smoke Test Local Demo QA-12 (`evidence/RUN-20261010-004600/`)**](evidence/RUN-20261010-004600/execution-summary.md): Khởi chạy máy chủ cục bộ 127.0.0.1:8000, 6 HTTP contracts PASS, bảng kiểm thử thủ công UI 6 kịch bản.
 - [**Bằng chứng Retest & Regression QA-10 (`evidence/RUN-20261010-000500/`)**](evidence/RUN-20261010-000500/execution-summary.md): Xác minh thành công BUG-0001, full regression 53/53 tests PASS.
 - [**Bằng chứng Tổng hợp Đợt chạy QA-07 (`evidence/RUN-20261009-220000/`)**](evidence/RUN-20261009-220000/execution-summary.md): Master run 53/53 tests PASS, kết quả lint, typecheck và production build.
 - [**Bằng chứng Batch 1 đến 5 (`evidence/RUN-20261009-212600/` .. `215300/`)**](evidence/RUN-20261009-215300/execution-summary.md): Toàn bộ 5 đợt triển khai automated tests theo từng batch.
@@ -94,7 +96,7 @@ docs/06-testing/
 | :--- | :--- | :---: | :---: |
 | **Test Cases Thiết kế** | 34 / 34 TCs | **100%** | Bao phủ 100% Acceptance Criteria của 12 US |
 | **Test Cases Tự động hóa** | 34 / 34 TCs PASS | **100%** | Hoàn thành trọn vẹn qua 5 batch kiểm thử tự động |
-| **Tổng số Backend Tests** | 53 / 53 Tests PASS | **100%** | Chạy trong 0.301s, 0 lỗi hồi quy (Zero Regression) |
-| **Frontend Production Build** | PASS (34.83s) | **100%** | Đóng gói thành công bundle `FE/dist/` |
+| **Tổng số Backend Tests** | 53 / 53 Tests PASS | **100%** | Chạy trong 0.275s, 0 lỗi hồi quy (Zero Regression) |
+| **Frontend Production Build** | PASS (34.83s) | **100%** | Đóng gói thành công bundle `FE/dist/` (cần rebuild để sync asset mới) |
 | **Release Blockers** | **0 Blocker Active** | — | `BUG-0001` đã được sửa và **VERIFIED** thành công |
-| **Quyết định Phát hành** | • **Local Demo:** `LOCAL DEMO VERIFIED WITH LIMITATIONS`<br/>• **Staging / UAT:** `NOT VERIFIED`<br/>• **Production:** `BLOCKED / NOT READY` | — | Đã kiểm chứng thực tế bằng smoke test runtime và checklist UI (QA-12) |
+| **Quyết định Phát hành** | • **Dịch vụ Backend:** `LOCAL SERVICE SMOKE PASS`<br/>• **Giao diện Demo:** `LOCAL DEMO NOT VERIFIED`<br/>• **Staging / UAT:** `NOT VERIFIED`<br/>• **Production:** `BLOCKED / NOT READY` | — | Phân định ranh giới nghiêm ngặt giữa Service API và Browser UI (QA-12A) |

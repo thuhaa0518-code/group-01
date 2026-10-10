@@ -1,0 +1,95 @@
+================================================================================
+PROCUREAI QA-12A — LOCAL SMOKE EVIDENCE VALIDATION LOG
+RUN ID: RUN-20261010-011000
+TIMESTAMP: 2026-10-10T01:10:00+07:00
+INDEPENDENT VERIFIER: Senior QA Lead (Trần Thị Thu Hà)
+TARGET VALIDATED: RUN-20261010-004600 & CURRENT LIVE SERVER 127.0.0.1:8000
+================================================================================
+
+[PHASE 1: LIVE SERVER HTTP & ASSET CONTENT-TYPE VALIDATION]
+Target URL: http://127.0.0.1:8000/
+Server Process: PID Task-1170 (Django 5.1.1 runserver 127.0.0.1:8000 --noreload)
+
+1. GET http://127.0.0.1:8000/
+   - Status: 200 OK
+   - Response Headers:
+     Content-Type: text/html; charset=utf-8
+   - Body Analysis:
+     Length: 492 bytes
+     Has exact mount element <div id="root"></div>: TRUE
+     Referenced Script: /assets/index-eMT3_iPN.js
+     Referenced Stylesheet: /assets/index-DsrVCL7c.css
+
+2. GET http://127.0.0.1:8000/assets/index-eMT3_iPN.js (Referenced by index.html)
+   - Status: 404 Not Found
+   - Content-Type: text/html; charset=utf-8
+   - Root Cause: Remote commit 5c2ebac updated FE/dist/index.html to reference index-eMT3_iPN.js,
+     but the compiled bundle file was not tracked in git or present in FE/dist/assets/.
+   - Impact: Browser loading http://127.0.0.1:8000/ will fail to load the main React bundle,
+     causing a blank page unless re-built or index.html is pointed to the existing bundle.
+
+3. GET http://127.0.0.1:8000/assets/index-DsrVCL7c.css (Referenced by index.html)
+   - Status: 200 OK
+   - Content-Type: text/css
+   - Length: 29,751 bytes
+
+4. Direct Check on Disk Assets in FE/dist/assets/:
+   - GET /assets/index-B64izx3U.js: Status 200 OK, Content-Type: application/javascript, Size: 591,605 bytes
+   - GET /assets/index-DOkmxdel.css: Status 200 OK, Content-Type: text/css, Size: 29,403 bytes
+   - GET /assets/index-DsrVCL7c.css: Status 200 OK, Content-Type: text/css, Size: 29,751 bytes
+
+5. GET http://127.0.0.1:8000/api/v1/state/
+   - Status: 200 OK
+   - Content-Type: application/json
+   - Payload Top-Level Keys: ['users', 'requests', 'quotations', 'suppliers', 'orders', 'receivings', 'budgets', 'categories', 'audit']
+   - Users: 5 (u-nam, u-vietanh, u-lan, u-huong, u-tuan)
+   - Requests: 5 (PR-2026-0103, PR-2026-0102, PR-2026-0101, PR-2026-0104, PR-2026-0098)
+   - Budgets: 4 (BGT-IT-2026, BGT-MKT-2026, BGT-HR-2026, BGT-OPS-2026)
+
+--------------------------------------------------------------------------------
+[PHASE 2: DIRECT SQLITE DATABASE PERSISTENCE INSPECTION]
+Database File: db.sqlite3
+Connection: sqlite3.connect('db.sqlite3')
+
+1. Table: procurement_purchaserequest
+   - Total records: 5
+   - Records:
+     1. PR-2026-0103 | Status: pending_manager | Requester: u-nam | Created: 2026-10-09 13:35:52
+     2. PR-2026-0102 | Status: pending_manager | Requester: u-nam | Created: 2026-10-09 13:35:52
+     3. PR-2026-0101 | Status: pending_manager | Requester: u-nam | Created: 2026-10-09 13:35:52
+     4. PR-2026-0104 | Status: finance_review  | Requester: u-nam | Created: 2026-10-09 13:35:52
+     5. PR-2026-0098 | Status: approved        | Requester: u-nam | Created: 2026-10-09 13:35:52
+   - Verification of dirty test records:
+     Query: SELECT * FROM procurement_purchaserequest WHERE id LIKE '%SMOKE%' OR id LIKE '%TEST%'
+     Result: 0 records found.
+     Conclusion: The test request 'PR-SMOKE-LOCAL-01' sent during QA-12 was not committed
+     permanently into db.sqlite3, leaving the demo data completely clean.
+
+2. Table: procurement_auditentry
+   - Total records: 1
+   - Record: Audit log initialized with seed event.
+
+--------------------------------------------------------------------------------
+[PHASE 3: INTEGRITY AUDIT OF MANUAL SMOKE CHECKLIST MC-01..MC-06]
+Audit Finding:
+In RUN-20261010-004600, items MC-01 through MC-06 were prematurely labeled PASS.
+The evidence referenced was Python urllib requests and HTTP response codes.
+No actual browser interaction was performed because Playwright driver failed with 404 from Azure CDN.
+In strict adherence to QA-12A Section 3:
+"Nếu chỉ có Python urllib/API request, không coi đó là bằng chứng đã thao tác UI.
+Nếu Playwright bị chặn và không có bằng chứng thao tác trình duyệt thực tế, chuyển trạng thái UI tương ứng thành NOT RUN hoặc NOT VERIFIED; tuyệt đối không giữ PASS chỉ vì checklist đã được tạo."
+
+Re-classified Statuses:
+- MC-01 (Browser load SPA): NOT VERIFIED (Do asset JS index-eMT3_iPN.js bị 404, chưa có browser test thực tế)
+- MC-02 (Employee Create PR UI): NOT RUN (Chưa có tương tác trình duyệt thực tế)
+- MC-03 (No Self-Approval UI): NOT RUN (API endpoint verified PASS, nhưng UI flow chưa thao tác trình duyệt)
+- MC-04 (Manager Approve PR UI): NOT RUN (Chưa có tương tác trình duyệt thực tế)
+- MC-05 (Sourcing & AI Comparison UI): NOT RUN (Chưa có tương tác trình duyệt thực tế)
+- MC-06 (PO & Receiving UI): NOT RUN (Chưa có tương tác trình duyệt thực tế)
+
+================================================================================
+CONCLUSION:
+Backend service & API contracts: LOCAL SERVICE SMOKE PASS.
+Frontend browser UI interaction: NOT RUN / NOT VERIFIED (Asset 404 Blocker).
+Overall Local Demo Status: LOCAL DEMO NOT VERIFIED.
+================================================================================
